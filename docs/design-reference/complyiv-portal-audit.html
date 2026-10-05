@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comply iV — Client Portal (Audit System prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+
+/* ===================== THEME TOKENS (Draft 1 lighter teal) ===================== */
+:root{
+  --brand:#0E8C7F; --brand-2:#13B5A2; --brand-soft:#E2F2EF; --brand-ink:#0A6A60;
+  --ink:#0E1A21; --ink-2:#13242D; --ink-3:#1B313B; --ink-line:#21323A;
+  --rust:#c0531f; --rust-soft:#f6e4d8;
+  --ok:#16A34A; --warn:#D6920C; --bad:#dc2626; --info:#2F6BFF;
+  --grade:#dc2626;
+
+  --bg:#F4F6F4; --surface:#FFFFFF; --surface-2:#FBFCFB; --surface-3:#F1F4F1;
+  --txt:#15232B; --txt-2:#647079; --txt-3:#94A0A6; --line:#E6E9E5; --line-2:#EDF0EC;
+  --shadow:0 1px 2px rgba(16,30,40,.04),0 6px 22px rgba(16,30,40,.06);
+  --shadow-lg:0 12px 40px rgba(16,30,40,.12);
+  --radius:14px; --radius-sm:9px; --sidebar-w:248px;
+  --display:'Sora',sans-serif; --body:'Plus Jakarta Sans',sans-serif;
+  --serif:'Spectral',serif; --mono:'JetBrains Mono',monospace;
+}
+html[data-theme="dark"]{
+  --bg:#0a111c; --surface:#101b29; --surface-2:#0d1623; --surface-3:#16253a;
+  --txt:#eef3fa; --txt-2:#9fb0c7; --txt-3:#6b7d96; --line:#1d2c40; --line-2:#1a2840;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  --shadow-lg:0 18px 50px rgba(0,0,0,.5);
+  --brand-soft:#0c3b37;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--body);background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5;overflow:hidden}
+h1,h2,h3,h4,h5{font-family:var(--display);font-weight:700;letter-spacing:-.01em;line-height:1.15}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:20px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--txt-3)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+/* ===================== LAYOUT ===================== */
+.app{display:flex;height:100vh;width:100vw}
+.sidebar{width:var(--sidebar-w);flex:0 0 var(--sidebar-w);background:linear-gradient(185deg,#0E1A21,#0c1f27 60%,#0a2428);color:#cdd9e6;display:flex;flex-direction:column;border-right:1px solid #15212f;position:relative;z-index:30}
+.brand{display:flex;align-items:center;gap:11px;padding:20px 20px 16px}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(145deg,var(--brand-2),var(--brand-ink));display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;color:#04211e;font-size:13px;box-shadow:0 4px 14px rgba(19,181,162,.35)}
+.brand-name{font-family:var(--display);font-weight:700;font-size:15.5px;color:#fff;letter-spacing:-.02em}
+.brand-name b{color:var(--brand-2)}
+.brand-sub{font-size:10px;color:#5f7488;letter-spacing:.14em;text-transform:uppercase;margin-top:1px}
+.nav{flex:1;overflow-y:auto;padding:6px 12px 12px}
+.nav-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#5a6f84;padding:18px 10px 7px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:#aebccd;font-weight:500;font-size:13.5px;cursor:pointer;position:relative;margin-bottom:2px;transition:.16s}
+.nav-item:hover{background:#13202e;color:#fff}
+.nav-item.active{background:linear-gradient(90deg,rgba(19,181,162,.18),rgba(19,181,162,.04));color:#fff}
+.nav-item.active::before{content:"";position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:3px;height:22px;background:var(--brand-2);border-radius:0 4px 4px 0}
+.nav-item .ic{width:18px;height:18px;flex:0 0 18px;opacity:.85}
+.nav-item.active .ic{opacity:1}
+.hardstop{display:flex;align-items:center;gap:15px;background:linear-gradient(120deg,#7f1d1d,#a01f1f);color:#fff;border-radius:var(--radius);padding:15px 18px;margin-bottom:16px;box-shadow:0 6px 22px rgba(127,29,29,.25)}
+.hardstop .hs-ic{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none;font-weight:800;font-size:17px;font-family:var(--display)}
+.hardstop .hs-t{font-family:var(--display);font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+.hardstop .hs-d{font-size:12.5px;color:rgba(255,255,255,.87);margin-top:3px;line-height:1.5;max-width:80ch}
+.hardstop .hs-a{margin-left:auto;display:flex;gap:8px;flex:none}
+.hardstop .btn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff}
+.hardstop .btn:hover{background:rgba(255,255,255,.24)}
+.hardstop .btn.w{background:#fff;color:#7f1d1d;border-color:#fff;font-weight:700}
+.note-box{padding:13px 15px;border-radius:10px;background:#fdf8ec;border:1px solid #eddfc0;color:#6f4905;font-size:12.5px;line-height:1.6;margin:14px 0}
+.note-box b{color:#4a3103}
+[data-theme="dark"] .note-box{background:#2a2210;border-color:#4a3d1a;color:#e8d5a8}
+.privchip{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #bfe3dc;padding:5px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:.15s}
+.privchip:hover{border-color:var(--brand-2)}
+.privchip .pdot{width:6px;height:6px;border-radius:50%;background:var(--brand);flex:none}
+[data-theme="dark"] .privchip{border-color:#1d5c55;color:#7fd8cb}
+.prov{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:5px;border:1px solid var(--line);color:var(--txt-3);background:var(--surface-3);white-space:nowrap}
+.prov.own{border-color:#b9e0d8;background:var(--brand-soft);color:var(--brand-ink)}
+.prov.partner{border-color:#ecd9bd;background:#fdf4e5;color:#8a5a06}
+.lawbadge{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:6px;font-family:var(--display);white-space:nowrap}
+.lb-vac{background:#fbeceb;color:var(--bad)} .lb-chg{background:#fdf3e0;color:#8a5a06}
+.lb-uns{background:#fdf3e0;color:#8a5a06} .lb-pha{background:#eaf1ff;color:var(--info)}
+.lawcard{display:flex;gap:13px;align-items:flex-start;padding:15px 16px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;transition:.15s}
+.lawcard:hover{border-color:var(--brand-2);box-shadow:var(--shadow)}
+.lawcard h4{font-family:var(--display);font-size:13.5px;margin-bottom:5px}
+.lawcard p{font-size:12px;color:var(--txt-2);line-height:1.55}
+.lawcard .cite{font-size:11px;color:var(--txt-3);font-style:italic;margin-top:6px}
+.dfnum{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:-.5px}
+.thesis{display:flex;gap:18px;align-items:flex-start;background:linear-gradient(120deg,var(--brand-soft),transparent 70%);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:var(--radius);padding:18px 20px;margin-bottom:18px}
+.thesis .th-k{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--brand-ink);font-weight:800;font-family:var(--display)}
+.thesis h2{font-family:var(--display);font-size:19px;font-weight:800;letter-spacing:-.02em;margin:7px 0 8px;line-height:1.3;color:var(--txt)}
+.thesis p{font-size:13px;color:var(--txt-2);line-height:1.65;max-width:95ch}
+.forces{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.force{border:1px solid var(--line);border-radius:13px;padding:17px 18px;background:var(--surface);cursor:pointer;transition:.16s;display:flex;flex-direction:column;gap:7px}
+.force:hover{border-color:var(--brand);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.force .f-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.force .f-tag{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:800;font-family:var(--display);color:var(--txt-3);border:1px solid var(--line);padding:2px 7px;border-radius:4px}
+.force h4{font-size:14px;font-family:var(--display);line-height:1.35;letter-spacing:-.01em}
+.force .f-head{font-size:11.5px;color:var(--brand-ink);font-weight:700;font-family:var(--display);line-height:1.4}
+.force p{font-size:12px;color:var(--txt-2);line-height:1.55}
+.force .f-go{margin-top:auto;font-size:11.5px;color:var(--brand);font-weight:700;font-family:var(--display);padding-top:8px}
+.srcitem{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line-2);align-items:flex-start}
+.srcitem:first-child{border-top:none}
+.srcitem a{color:var(--brand);font-weight:600;font-size:12.5px;text-decoration:none;font-family:var(--display)}
+.srcitem a:hover{text-decoration:underline}
+.realchip{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;font-family:var(--display);padding:2px 8px;border-radius:20px;background:rgba(22,163,74,.13);color:var(--ok);text-transform:uppercase;letter-spacing:.06em}
+.samplechip2{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;font-family:var(--display);padding:2px 8px;border-radius:20px;background:var(--surface-3);color:var(--txt-3);text-transform:uppercase;letter-spacing:.06em}
+@media(max-width:1100px){.forces{grid-template-columns:1fr}}
+.cvrow{display:flex;gap:16px;align-items:flex-start;padding:16px 18px;border-top:1px solid var(--line-2);cursor:pointer;transition:.15s}
+.cvrow:first-child{border-top:none}
+.cvrow:hover{background:var(--surface-2)}
+.cvgrade{width:46px;height:46px;border-radius:11px;display:grid;place-items:center;font-family:var(--display);font-size:23px;font-weight:800;flex:none}
+.cvhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.cvhead h4{font-size:14px;font-family:var(--display)}
+.cvline{font-size:12px;color:var(--txt-2);margin-top:5px;line-height:1.55}
+.cvret{text-align:right;flex:none;min-width:118px}
+.cvladder{display:grid;grid-template-columns:32px 1fr;gap:11px 12px;align-items:start;font-size:12.5px;color:var(--txt-2);line-height:1.55}
+.cvladder .lg{font-family:var(--display);font-weight:800;font-size:14px;width:30px;height:28px;border-radius:8px;display:grid;place-items:center}
+.dfgrade{width:46px;height:46px;border-radius:11px;display:grid;place-items:center;font-family:var(--display);font-size:23px;font-weight:800;flex:none}
+.dfsec{padding:16px 18px;border-top:1px solid var(--line-2)}
+.dfsec .dfh{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);font-weight:700;margin-bottom:11px}
+.kv{display:grid;grid-template-columns:165px 1fr;gap:6px 16px;font-size:12.5px}
+.kv dt{color:var(--txt-2)} .kv dd{font-weight:600}
+.evrow{display:flex;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line-2);font-size:12.5px}
+.evrow:last-child{border-bottom:none}
+.evrow .evd{font-family:var(--mono);color:var(--txt-3);width:100px;flex:none;font-size:11.5px}
+.lookup{display:flex;gap:9px;margin-bottom:16px}
+.lookup input{flex:1;max-width:330px;padding:11px 15px;border:1px solid var(--line);border-radius:10px;font-family:var(--mono);font-size:14px;background:var(--surface);color:var(--txt)}
+.lookup input:focus{outline:none;border-color:var(--brand-2)}
+.ctrlscore{display:flex;align-items:center;gap:22px;padding:18px 20px}
+.csnum{font-family:var(--display);font-size:52px;font-weight:800;line-height:1;letter-spacing:-2px}
+.csbars{display:flex;align-items:flex-end;gap:4px;height:44px;flex:none;width:150px}
+.csbars i{flex:1;border-radius:3px 3px 0 0;background:var(--line);display:block}
+.csbars i.on{background:var(--brand)}
+.nav-item .badge{margin-left:auto;background:var(--rust);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;font-family:var(--display)}
+.side-card{margin:12px;padding:14px;border-radius:13px;background:linear-gradient(160deg,#10212c,#0c2b2a);border:1px solid #16383a}
+.side-card .sc-tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-2);font-weight:700}
+.side-card h4{font-family:var(--display);color:#fff;font-size:13.5px;margin:7px 0 5px}
+.side-card p{font-size:11.5px;color:#8ea3b6;line-height:1.5}
+.side-card .sc-btn{margin-top:11px;width:100%;padding:8px;border-radius:8px;background:var(--brand-2);color:#04211e;font-weight:700;font-size:12px;font-family:var(--display)}
+.side-card .sc-btn:hover{background:#2dd4bf}
+.side-user{display:flex;align-items:center;gap:10px;padding:13px 16px;border-top:1px solid #15212f}
+.avatar{width:32px;height:32px;border-radius:9px;background:linear-gradient(140deg,#22384a,#16505b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#cdeae5;font-size:12px;font-family:var(--display)}
+.side-user .su-name{font-size:12.5px;font-weight:600;color:#e4edf5}
+.side-user .su-org{font-size:10.5px;color:#62788c}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:62px;flex:0 0 62px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;z-index:20}
+.search{flex:1;max-width:440px;display:flex;align-items:center;gap:9px;background:var(--surface-3);border:1px solid var(--line);border-radius:11px;padding:9px 13px;color:var(--txt-3);transition:.15s}
+.search:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.search input{flex:1;border:none;background:none;outline:none;color:var(--txt);font-family:inherit;font-size:13px}
+.search .kbd{font-size:10px;color:var(--txt-3);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-family:var(--display)}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.freshness{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--txt-2);background:var(--surface-3);border:1px solid var(--line);border-radius:20px;padding:6px 12px}
+.freshness .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.18);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--txt-2);transition:.15s;position:relative}
+.icon-btn:hover{border-color:var(--brand);color:var(--brand)}
+.icon-btn .ndot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--rust);border:2px solid var(--surface)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:10px;font-weight:600;font-size:13px;font-family:var(--display);transition:.15s;border:1px solid transparent}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-ink)}
+.btn-ghost{background:var(--surface);border-color:var(--line);color:var(--txt)}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+
+.scroll{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.page{display:none;padding:30px 34px 70px;max-width:1240px;margin:0 auto;animation:fade .4s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px;flex-wrap:wrap}
+.page-head .ph-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:7px}
+.page-head h1{font-size:26px;color:var(--txt)}
+.page-head .ph-sub{color:var(--txt-2);font-size:13px;margin-top:6px}
+.ph-actions{display:flex;gap:9px;align-items:center}
+
+/* ===================== CARDS ===================== */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-pad{padding:22px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px}
+.card-h h3{font-size:15px;color:var(--txt)}
+.card-h .ch-sub{font-size:11px;color:var(--txt-3);font-weight:500;display:flex;align-items:center;gap:6px}
+.grid{display:grid;gap:18px}
+.muted{color:var(--txt-2)}
+.tiny{font-size:11px;color:var(--txt-3)}
+.col-2{grid-template-columns:1fr 1fr}
+.col-3{grid-template-columns:repeat(3,1fr)}
+.col-4{grid-template-columns:repeat(4,1fr)}
+.col-2-1{grid-template-columns:2fr 1fr}
+.col-1-2{grid-template-columns:1fr 2fr}
+@media(max-width:980px){.col-2,.col-3,.col-4,.col-2-1,.col-1-2{grid-template-columns:1fr}}
+
+/* click affordance */
+.clickcard{cursor:pointer;transition:.16s;position:relative}
+.clickcard:hover{border-color:var(--brand);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.clickcard .chev{position:absolute;top:16px;right:16px;color:var(--txt-3);opacity:0;transition:.16s}
+.clickcard:hover .chev{opacity:1;color:var(--brand)}
+
+.src{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--txt-3);font-weight:600;background:var(--surface-3);border:1px solid var(--line);padding:2px 8px;border-radius:6px;white-space:nowrap}
+.weight-pill{font-family:var(--display);font-weight:700;font-size:11px;color:var(--brand-ink);background:var(--brand-soft);padding:2px 8px;border-radius:6px}
+html[data-theme="dark"] .weight-pill{color:var(--brand-2)}
+
+.trend{display:inline-flex;align-items:center;gap:3px;font-weight:700;font-size:12px;font-family:var(--display)}
+.trend.up{color:var(--bad)} .trend.down{color:var(--ok)} .trend.flat{color:var(--txt-3)}
+.trend.up.good{color:var(--ok)} .trend.down.bad{color:var(--bad)}
+
+/* tooltips (hover + keyboard focus) */
+.tip{position:relative;cursor:help;outline:none}
+.tip .tip-i{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--txt-3);color:var(--txt-3);font-size:9px;font-weight:700;margin-left:5px;vertical-align:middle;font-family:var(--display);transition:.14s}
+.tip:hover .tip-i,.tip:focus .tip-i,.tip:focus-within .tip-i{border-color:var(--brand);color:var(--brand)}
+.tip:hover .tip-box,.tip:focus .tip-box,.tip:focus-within .tip-box{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.tip-box{position:absolute;bottom:150%;left:50%;transform:translate(-50%,6px);width:236px;background:var(--ink);color:#dfe8f2;font-size:11.5px;line-height:1.55;padding:11px 13px;border-radius:10px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:.18s;z-index:60;font-weight:400;text-transform:none;letter-spacing:0}
+.tip-box::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink)}
+.tip-box b{color:var(--brand-2)}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;font-family:var(--display)}
+.pill.red{background:rgba(220,38,38,.12);color:var(--bad)}
+.pill.amber{background:rgba(214,146,12,.16);color:#946008}
+.pill.green{background:rgba(22,163,74,.13);color:var(--ok)}
+.pill.teal{background:var(--brand-soft);color:var(--brand-ink)}
+.pill.gray{background:var(--surface-3);color:var(--txt-2)}
+html[data-theme="dark"] .pill.teal{color:var(--brand-2)}
+html[data-theme="dark"] .pill.amber{color:var(--warn)}
+
+/* ===================== HERO ===================== */
+.hero{display:grid;grid-template-columns:330px 1fr;gap:0;overflow:hidden;position:relative}
+.hero-grade{background:linear-gradient(165deg,#0E1A21,#0c2330 70%,#0a2a2c);color:#fff;padding:28px 26px 26px;position:relative;overflow:hidden}
+.hero-grade::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(19,181,162,.16),transparent 70%)}
+.hg-tag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#7d93a6;font-weight:700;position:relative}
+.gauge-wrap{position:relative;width:230px;height:150px;margin:10px auto 2px}
+.gauge-num{position:absolute;left:0;right:0;bottom:8px;text-align:center}
+.gauge-grade{font-family:var(--display);font-size:62px;font-weight:800;line-height:1;color:#fff}
+.gauge-label{font-family:var(--display);font-size:16px;font-weight:700;text-align:center;color:#fff;margin-top:4px}
+.gauge-expo{text-align:center;margin-top:7px}
+.gauge-expo b{font-family:var(--display);font-size:30px;font-weight:800}
+.gauge-expo span{font-size:11px;color:#8aa0b2;letter-spacing:.08em}
+.hg-band{display:flex;gap:4px;margin-top:18px}
+.hg-band .b{flex:1;height:6px;border-radius:3px;opacity:.3}
+.hg-band .b.on{opacity:1}
+.hg-scale{display:flex;justify-content:space-between;font-size:9.5px;color:#6f8497;margin-top:6px;letter-spacing:.04em}
+
+.hero-body{padding:30px 30px;display:flex;flex-direction:column;justify-content:center}
+.hb-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:10px}
+.hb-headline{font-family:var(--display);font-size:20px;font-weight:600;color:var(--txt);line-height:1.25}
+.hb-headline .big{font-size:50px;font-weight:800;letter-spacing:-.02em;display:inline-block;vertical-align:-6px;margin-right:6px}
+.hb-headline .big small{font-size:18px;color:var(--txt-3)}
+.statchips{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.statchip{border:1px solid var(--line);border-radius:11px;padding:11px 14px;min-width:120px}
+.statchip .sc-v{font-family:var(--display);font-size:21px;font-weight:800}
+.statchip .sc-l{font-size:10.5px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;display:flex;align-items:center}
+
+/* vectors */
+.vec{display:grid;grid-template-columns:230px 1fr 70px;align-items:center;gap:18px;padding:16px 10px;border-top:1px solid var(--line-2);margin:0 -10px;border-radius:10px;cursor:pointer;transition:.14s}
+.vec:hover{background:var(--surface-3)}
+.vec:first-of-type{border-top:none}
+.vec-name{font-family:var(--display);font-weight:600;font-size:13.5px;color:var(--txt);display:flex;align-items:center}
+.vec-meta{display:flex;align-items:center;gap:7px;margin-top:7px;flex-wrap:wrap}
+.vec-bar{height:9px;background:var(--surface-3);border-radius:6px;overflow:hidden}
+.vec-bar .fill{height:100%;border-radius:6px;width:0;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+.vec-score{text-align:right;font-family:var(--display);font-weight:800;font-size:24px;color:var(--txt)}
+.vec-score small{font-size:11px;color:var(--txt-3);font-weight:600}
+
+/* kpi */
+.kpi{padding:18px 18px}
+.kpi .k-tag{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3);font-weight:700;display:flex;align-items:center}
+.kpi .k-val{font-family:var(--display);font-size:30px;font-weight:800;color:var(--txt);margin:8px 0 4px;line-height:1}
+.kpi .k-val small{font-size:16px;color:var(--rust)}
+.kpi .k-foot{font-size:11.5px;color:var(--txt-2);display:flex;align-items:center;gap:6px}
+
+/* recs / activity */
+.rec{display:flex;gap:13px;padding:14px 10px;border-top:1px solid var(--line-2);align-items:center;margin:0 -10px;border-radius:10px;cursor:pointer;transition:.14s}
+.rec:hover{background:var(--surface-3)}
+.rec:first-of-type{border-top:none}
+.rec .rec-rank{width:26px;height:26px;flex:0 0 26px;border-radius:8px;background:var(--brand-soft);color:var(--brand-ink);font-family:var(--display);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+html[data-theme="dark"] .rec .rec-rank{color:var(--brand-2)}
+.rec h4{font-size:13.5px;color:var(--txt);font-family:var(--display);font-weight:600}
+.rec .rec-impact{margin-left:auto;text-align:right;flex:0 0 auto}
+.rec .rec-impact b{font-family:var(--display);font-size:15px}
+.rec .rec-impact span{display:block;font-size:10px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.05em}
+.locked{filter:grayscale(.3);opacity:.7}
+
+.act{display:flex;gap:12px;padding:13px 0;border-top:1px solid var(--line-2);align-items:center}
+.act:first-child{border-top:none}
+.act .act-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+.act .act-txt{font-size:12.5px;color:var(--txt);line-height:1.45}
+.act .act-txt b{font-weight:600}
+.act .act-time{margin-left:auto;font-size:11px;color:var(--txt-3);white-space:nowrap;flex:0 0 auto;font-family:var(--display)}
+
+/* tables */
+table.tbl{width:100%;border-collapse:collapse}
+table.tbl th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3);font-weight:700;padding:0 14px 12px;border-bottom:1px solid var(--line)}
+table.tbl td{padding:14px;border-bottom:1px solid var(--line-2);font-size:13px;color:var(--txt);vertical-align:middle}
+table.tbl tr:last-child td{border-bottom:none}
+table.tbl tr.clickrow{cursor:pointer;transition:.12s}
+table.tbl tr.clickrow:hover td{background:var(--surface-3)}
+.lawyer{font-weight:600}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+.meter{height:8px;border-radius:6px;background:var(--surface-3);overflow:hidden}
+.meter .mf{height:100%;border-radius:6px}
+.bench{display:grid;grid-template-columns:150px 1fr 60px;gap:14px;align-items:center;padding:11px 0;border-top:1px solid var(--line-2)}
+.bench:first-child{border-top:none}
+.bench .bl{font-size:12.5px;color:var(--txt);font-weight:500}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-2)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* feature tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:980px){.tiles{grid-template-columns:1fr}}
+.tile{border:1px solid var(--line);border-radius:13px;padding:18px;cursor:pointer;transition:.16s;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.tile:hover{border-color:var(--brand);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.tile .t-ic{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+html[data-theme="dark"] .tile .t-ic{color:var(--brand-2)}
+.tile h4{font-size:14px;font-family:var(--display)}
+.tile .t-meta{font-size:11.5px;color:var(--txt-3)}
+.tile .t-go{margin-top:auto;font-size:12px;color:var(--brand);font-weight:700;font-family:var(--display);padding-top:10px}
+
+/* frow */
+.frow{display:flex;align-items:center;gap:13px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);transition:.14s;margin-bottom:10px}
+.frow:hover{border-color:var(--brand);box-shadow:var(--shadow)}
+.frow .ficon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 36px;font-weight:700}
+.frow .fname{font-weight:600;font-size:13px;color:var(--txt)}
+.frow .fmeta{font-size:11px;color:var(--txt-3)}
+.frow .fact{margin-left:auto;display:flex;gap:8px}
+
+/* timeline */
+.tl{position:relative;padding-left:26px}
+.tl::before{content:"";position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.tl-item{position:relative;padding:0 0 20px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item .tl-dot{position:absolute;left:-23px;top:2px;width:14px;height:14px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--line)}
+.tl-item h4{font-size:13.5px;font-family:var(--display);color:var(--txt)}
+.tl-item .tl-date{font-size:11px;color:var(--txt-3);font-family:var(--display);margin-bottom:3px}
+.tl-item p{font-size:12px;color:var(--txt-2);line-height:1.5;margin-top:2px}
+
+.like-wrap{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.like-num{font-family:var(--display);font-size:40px;font-weight:800;line-height:1;color:var(--bad)}
+
+.seg{display:inline-flex;background:var(--surface-3);border:1px solid var(--line);border-radius:9px;padding:3px}
+.seg button{padding:5px 13px;border-radius:7px;font-size:12px;font-weight:600;color:var(--txt-2);font-family:var(--display)}
+.seg button.on{background:var(--surface);color:var(--brand);box-shadow:var(--shadow)}
+
+/* upsell slim */
+.upsell{background:linear-gradient(150deg,#0E1A21,#10242e 70%,#0b2a2b);color:#fff;border-radius:var(--radius);padding:22px 26px;position:relative;overflow:hidden;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.upsell::after{content:"";position:absolute;right:-40px;bottom:-60px;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(192,83,31,.18),transparent 70%)}
+.upsell .up-tag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--rust);font-weight:700;position:relative}
+.upsell h3{font-family:var(--serif);font-weight:600;font-size:19px;color:#fff;margin-top:5px;position:relative;max-width:520px}
+.upsell .up-cta{position:relative;margin-left:auto}
+.upsell .up-cta .btn{background:var(--rust);color:#fff}
+.upsell .up-cta .btn:hover{background:#a8461a}
+
+/* drawer */
+.drawer-bg{position:fixed;inset:0;background:rgba(8,15,25,.5);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.25s;z-index:90}
+.drawer-bg.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:460px;max-width:94vw;background:var(--surface);box-shadow:var(--shadow-lg);transform:translateX(100%);transition:.3s cubic-bezier(.4,0,.2,1);z-index:100;display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.drawer.open{transform:none}
+.drawer-h{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.drawer-h .dh-tag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:700}
+.drawer-b{flex:1;overflow-y:auto;padding:24px}
+.drawer-b .d-lede{font-family:var(--serif);font-size:17px;line-height:1.45;color:var(--txt);margin-bottom:16px}
+.drawer-b p{font-size:13px;color:var(--txt-2);line-height:1.65;margin-bottom:14px}
+.drawer-b h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-3);margin:18px 0 10px}
+.drawer-row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.drawer-row .dr-k{color:var(--txt-3)}
+.drawer-row .dr-v{color:var(--txt);font-weight:600;text-align:right}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:11px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:.3s;z-index:200;display:flex;align-items:center;gap:10px;font-weight:500}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .t-ic{color:var(--brand-2)}
+/* v8: sample chip, persistent disclaimer, direction tags, what's-new */
+.samplechip{font-size:10.5px;font-weight:600;color:var(--txt-3);background:var(--surface-3);border:1px dashed var(--line);border-radius:20px;padding:5px 11px;white-space:nowrap;cursor:default}
+.disclaimer{margin-top:30px;padding:12px 16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;font-size:11px;color:var(--txt-3);line-height:1.5}
+.disclaimer svg{width:15px;height:15px;flex:0 0 15px;color:var(--txt-3)}
+.dirtag{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:5px;font-family:var(--display)}
+.dirtag.worse{background:rgba(220,38,38,.1);color:var(--bad)}
+.dirtag.better{background:rgba(22,163,74,.12);color:var(--ok)}
+.win{display:flex;gap:13px;padding:14px 0;border-top:1px solid var(--line-2);align-items:flex-start}
+.win:first-of-type{border-top:none}
+.win .win-ic{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:rgba(22,163,74,.12);color:var(--ok);display:flex;align-items:center;justify-content:center}
+.win h4{font-size:13.5px;font-family:var(--display)}
+.win p{font-size:12px;color:var(--txt-2);margin-top:2px;line-height:1.5}
+.win .win-val{margin-left:auto;text-align:right;flex:0 0 auto;font-family:var(--display);font-weight:800;color:var(--ok);font-size:14px}
+.owner{display:inline-flex;align-items:center;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:5px;font-family:var(--display)}
+.owner.you{background:var(--brand-soft);color:var(--brand-ink)}
+.owner.we{background:rgba(47,107,255,.12);color:var(--info)}
+.owner.law{background:rgba(192,83,31,.12);color:var(--rust)}
+html[data-theme="dark"] .owner.you{color:var(--brand-2)}
+.indcard{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:.15s;background:var(--surface)}
+.indcard:hover{border-color:var(--brand);box-shadow:var(--shadow)}
+.indcard .iv{font-family:var(--display);font-weight:800;font-size:20px}
+.indcard .il{font-size:11.5px;color:var(--txt-2)}
+
+/* track-record scale — visually distinct from the exposure grade */
+.trk-scale{display:flex;gap:8px}
+.trk-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10.5px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.04em;text-align:center}
+.trk-pill{width:100%;height:8px;border-radius:5px;opacity:.32}
+.trk-step.on .trk-pill{opacity:1}
+/* linear meter */
+.tmeter{position:relative;height:12px;border-radius:8px;background:linear-gradient(90deg,var(--ok),var(--warn) 55%,var(--bad));box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
+.tmark{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-shadow:var(--shadow)}
+/* monitoring: live pulse + event-annotated history markers */
+.livedot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;box-shadow:0 0 0 3px rgba(22,163,74,.18);animation:pulse 2.4s infinite}
+.histwrap{position:relative;width:100%}
+#histMarkers{position:absolute;top:0;left:0;pointer-events:none}
+.hmark{position:absolute;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--surface);border:2px solid var(--bad);display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;padding:0;transition:.14s;box-shadow:var(--shadow)}
+.hmark:hover{transform:translate(-50%,-50%) scale(1.25);z-index:5}
+.hmark span{width:7px;height:7px;border-radius:50%;display:block}
+.srcrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+@media(max-width:980px){.srcrow{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1080px){.hero{grid-template-columns:1fr}}
+@media(max-width:760px){.sidebar{display:none}.vec{grid-template-columns:1fr 60px}.vec .vec-bar-wrap{display:none}}
+
+/* ===================== v2.0 ADDITIONS ===================== */
+.layertag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--brand-2);opacity:.9}
+.instrcode{font-family:var(--mono);font-size:10px;color:var(--txt-3);letter-spacing:.02em}
+.icode-chip{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;color:var(--txt-2);background:var(--surface-3);border:1px solid var(--line);padding:2px 6px;border-radius:4px;vertical-align:middle}
+
+/* propagation matrix */
+.matwrap{overflow-x:auto}
+table.mat{border-collapse:collapse;width:100%;min-width:720px;font-size:12.5px}
+table.mat th,table.mat td{padding:9px 10px;text-align:center;border-bottom:1px solid var(--line-2)}
+table.mat thead th{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--txt-3);font-weight:600;background:var(--surface-3);border-bottom:1px solid var(--line)}
+table.mat th.rowh{text-align:left;font-weight:600;color:var(--txt);font-size:12.5px;letter-spacing:0;text-transform:none;background:transparent;white-space:nowrap}
+table.mat tbody tr:last-child td,table.mat tbody tr:last-child th{border-bottom:none}
+.cell{display:inline-block;min-width:54px;padding:3px 7px;border-radius:5px;font-family:var(--mono);font-size:11.5px;font-weight:500}
+.cell.fast{background:#dcfce7;color:#14532d}
+.cell.okc{background:var(--brand-soft);color:var(--brand-ink)}
+.cell.slow{background:#fef3c7;color:#78350f}
+.cell.never{background:#fee2e2;color:#991b1b;font-weight:600;letter-spacing:.06em}
+html[data-theme="dark"] .cell.fast{background:#14532d;color:#bbf7d0}
+html[data-theme="dark"] .cell.slow{background:#78350f;color:#fde68a}
+html[data-theme="dark"] .cell.never{background:#7f1d1d;color:#fecaca}
+
+/* surface grade rows */
+.sgrade{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;font-family:var(--display);font-weight:800;font-size:12px;flex:none}
+.sg-a{background:#dcfce7;color:#14532d}.sg-b{background:var(--brand-soft);color:var(--brand-ink)}
+.sg-c{background:#fef3c7;color:#78350f}.sg-d{background:#ffedd5;color:#9a3412}.sg-f{background:#fee2e2;color:#991b1b}
+html[data-theme="dark"] .sg-a{background:#14532d;color:#bbf7d0}html[data-theme="dark"] .sg-c{background:#78350f;color:#fde68a}
+html[data-theme="dark"] .sg-d{background:#7c2d12;color:#fed7aa}html[data-theme="dark"] .sg-f{background:#7f1d1d;color:#fecaca}
+
+/* factor bars */
+.fbar{height:7px;border-radius:20px;background:var(--surface-3);overflow:hidden;margin-top:6px}
+.fbar span{display:block;height:100%;border-radius:20px}
+.frow2{display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:baseline}
+.fmul{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fmulc{background:var(--surface-3);border-radius:var(--radius-sm);padding:12px 14px;text-align:center}
+.fmulc b{display:block;font-family:var(--mono);font-size:18px;color:var(--txt);font-weight:500}
+.fmulc small{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3)}
+
+/* boundary columns */
+.bcol{border-top:2px solid var(--line);padding-top:14px}
+.bcol.we{border-top-color:var(--brand)}
+.bcol.you{border-top-color:var(--rust)}
+.bcol.non{border-top-color:var(--txt-3)}
+.bcol h4{font-size:13.5px;margin-bottom:4px}
+.bcol .bl{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--txt-3);font-weight:600;margin-bottom:10px}
+.bcol ul{list-style:none;font-size:12.5px;color:var(--txt-2);line-height:1.5}
+.bcol li{padding:7px 0;border-bottom:1px solid var(--line-2)}
+.bcol li:last-child{border-bottom:none}
+
+/* ladder */
+.ladder{display:flex;flex-direction:column;gap:8px}
+.lrung{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:13px 16px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface)}
+.lrung.done{background:var(--brand-soft);border-color:transparent}
+.lrung .ln{font-family:var(--mono);font-size:11px;color:var(--txt-3);width:16px}
+.lrung h5{font-size:13.5px;font-family:var(--display);font-weight:700}
+.lrung p{font-size:12px;color:var(--txt-2);margin-top:2px}
+.lrung .lp{font-family:var(--mono);font-size:12px;color:var(--txt-2);white-space:nowrap}
+
+/* coverage strip */
+.covstrip{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;margin-top:4px}
+.covm{height:34px;border-radius:4px;background:var(--brand);display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px}
+.covm span{font-family:var(--mono);font-size:8.5px;color:#fff;opacity:.9}
+.covm.pre{background:var(--surface-3);border:1px dashed var(--line)}
+.covm.pre span{color:var(--txt-3)}
+@media(max-width:980px){.covstrip{grid-template-columns:repeat(6,1fr)}}
+.badge.teal{background:var(--brand);color:#fff}
+.lookup .search-in{flex:1;max-width:330px;padding:11px 15px;border:1px solid var(--line);border-radius:10px;font-family:var(--mono);font-size:14px;background:var(--surface);color:var(--txt)}
+.lookup .search-in:focus{outline:none;border-color:var(--brand-2)}
+.legend i{display:inline-block;width:14px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.posrow{display:grid;grid-template-columns:190px 1fr auto;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2);align-items:baseline}
+.posrow:last-child{border-bottom:none}
+.posrow .pk{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3);font-weight:600}
+.posrow .pv{font-size:13px;color:var(--txt)}
+.posrow .ps{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);white-space:nowrap}
+@media(max-width:760px){.posrow{grid-template-columns:1fr}.posrow .ps{white-space:normal}}
+.qbar{display:flex;align-items:flex-end;gap:3px;height:38px}
+.qbar i{flex:1;background:var(--brand);border-radius:2px 2px 0 0;min-height:3px}
+.qbar i.hot{background:var(--bad)}
+
+/* ===================== AUDIT SYSTEM ADDITIONS ===================== */
+.samplechip{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7a4a05;background:#fbecd0;border:1px solid #f0d9a8;padding:4px 9px;border-radius:7px}
+html[data-theme="dark"] .samplechip{background:#2a2210;border-color:#4a3d1a;color:#e8d5a8}
+.b-a{background:rgba(22,163,74,.12);color:#15803d}.b-b{background:rgba(14,140,127,.13);color:var(--brand-ink)}
+.b-c{background:rgba(214,146,12,.15);color:#9a6700}.b-d{background:rgba(234,88,12,.14);color:#c2410c}
+.b-f{background:rgba(220,38,38,.13);color:#b91c1c}.b-n{background:var(--surface-3);color:var(--txt-2)}
+html[data-theme="dark"] .b-a{color:#6ee7a0}html[data-theme="dark"] .b-b{color:#6fd6c9}html[data-theme="dark"] .b-c{color:#f3c66b}
+html[data-theme="dark"] .b-d{color:#fdba74}html[data-theme="dark"] .b-f{color:#fca5a5}
+.dmap{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.dfam{display:flex;flex-direction:column;gap:8px;min-width:0}
+.dfam-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px 2px;border-bottom:1px solid var(--line-2)}
+.dfam-h b{font-family:var(--display);font-size:12.5px;font-weight:700}
+.dfam-h span{font-family:var(--mono);font-size:11.5px;color:var(--txt-2)}
+.dtile{width:100%;text-align:left;border-radius:10px;padding:10px 11px;display:flex;flex-direction:column;gap:2px;min-height:82px;border:1px solid transparent;transition:.15s}
+.dtile:hover{border-color:var(--txt-3);transform:translateY(-1px)}
+.dtile .dc{font-family:var(--mono);font-size:10.5px;font-weight:500;opacity:.85}
+.dtile .dn{font-size:12px;font-weight:600;line-height:1.3;color:var(--txt)}
+.dtile .ds{font-family:var(--display);font-size:16px;font-weight:700;margin-top:auto}
+.stbar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--surface-3)}
+.stbar i{display:block;height:100%}
+.st{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:3px 7px;border-radius:6px;white-space:nowrap}
+.st-v{background:rgba(22,163,74,.12);color:#15803d}.st-w{background:rgba(214,146,12,.16);color:#9a6700}
+.st-c{background:rgba(234,88,12,.14);color:#c2410c}.st-n{background:rgba(220,38,38,.13);color:#b91c1c}
+html[data-theme="dark"] .st-v{color:#6ee7a0}html[data-theme="dark"] .st-w{color:#f3c66b}html[data-theme="dark"] .st-c{color:#fdba74}html[data-theme="dark"] .st-n{color:#fca5a5}
+.flag{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--surface-3);color:var(--txt-2);border:1px solid var(--line);margin:1px 3px 1px 0;white-space:nowrap}
+.dcode{font-family:var(--mono);font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:5px;border:1px solid var(--line);background:var(--surface-2);color:var(--txt-2);cursor:pointer}
+.dcode:hover{border-color:var(--brand);color:var(--brand-ink)}
+.chk{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:9px;background:var(--surface-3);margin-bottom:6px;font-size:12.5px}
+.chk .n{font-family:var(--mono);font-size:11px;color:var(--txt-3);margin-right:8px}
+.cpseg{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--surface-3);margin:10px 0 12px}
+.cpseg i{display:block;height:100%}
+.cplegend{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cplegend div{font-size:11.5px;color:var(--txt-2)}
+.cplegend b{display:block;font-family:var(--display);font-size:18px;color:var(--txt)}
+.mcard{padding:16px 18px;display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:.15s}
+.mcard:hover{box-shadow:var(--shadow-lg)}
+.mcard .mc{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);font-weight:600}
+.mcard .mn{font-family:var(--display);font-size:13.5px;font-weight:700}
+.mcard .mv{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.02em}
+.mcard .mv.na{font-size:15px;color:var(--txt-3)}
+.mcard .mt{font-size:11.5px;color:var(--txt-2);line-height:1.45}
+.mfilter{display:flex;gap:6px;flex-wrap:wrap}
+.status-set{color:var(--ok);font-weight:700}.status-prop{color:var(--warn);font-weight:700}.status-tbd{color:var(--bad);font-weight:700}
+@media(max-width:1280px){.dmap{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.dmap{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">iV</div>
+      <div>
+        <div class="brand-name">Comply<b>&nbsp;iV</b></div>
+        <div class="brand-sub">Independent TCPA Audit</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-user">
+      <div class="avatar">DR</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;color:#fff;font-weight:600">Dana Reyes</div>
+        <div style="font-size:10.5px;color:#6b7f93">Owner · SunPath</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="gsearch" placeholder="Search domains and metrics" aria-label="Search">
+      </div>
+      <div class="top-right">
+        <span class="samplechip">Sample data</span>
+        <div class="freshness"><span class="livedot"></span> Updated 04:10 UTC</div>
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="scroll" id="scroll"><div class="page active" id="pageHost"></div></div>
+  </main>
+</div>
+
+<div class="drawer-bg" id="drawerBg" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+  <div class="drawer-h">
+    <div><div class="dirtag" id="drawerTag"></div><h3 id="drawerTitle"></h3></div>
+    <button class="icon-btn" onclick="closeDrawer()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="drawer-b" id="drawerBody"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Comply iV Client Portal — Automated TCPA Audit System prototype
+   Built on engineering spec v2 (29 Sep 2026). All figures are SAMPLE DATA.
+   Boundary: CiV measures and records. It operates no controls, holds no SAN,
+   sits in no call path and makes no compliance decisions.
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const CLIENT = {name:"SunPath Residential Solar", vertical:"Solar", seats:180, engaged:"01 Jun 2026", today:"30 Sep 2026", period:"Sep 2026", mode:"Direct engagement"};
+const REPORT = {id:"CIV-AR-2609", run:"Nightly run 30 Sep 2026 04:10 UTC", rulebook:"Rulebook v1.3 (effective-dated)", code:"Engine 2.0.4"};
+
+/* ---------- helpers ---------- */
+function info(t){ return `<span class="tip" tabindex="0"><span class="tip-i">i</span><span class="tip-box">${t}</span></span>`; }
+function gradeOf(s){ return s>=90?'A':s>=80?'B':s>=70?'C':s>=60?'D':'F'; }
+function gradeColor(g){ return {A:'var(--ok)',B:'var(--brand)',C:'var(--warn)',D:'#ea580c',F:'var(--bad)'}[g]; }
+function bandCls(s, excluded){ if(excluded||s==null) return 'b-n'; return 'b-'+gradeOf(s).toLowerCase(); }
+const ST = {VERIFIED:'st-v',WEAK:'st-w',CONFLICTING:'st-c',NO_PROOF:'st-n'};
+const st = s => `<span class="st ${ST[s]}">${s}</span>`;
+function scoreGauge(id, val, grade){
+  const cx=115, cy=128, r=88, p=Math.max(0,Math.min(100,val)), a=Math.PI*(1-p/100);
+  const x=cx+r*Math.cos(a), y=cy-r*Math.sin(a);
+  const seg=[[0,59.9,'var(--bad)'],[60,69.9,'#ea580c'],[70,79.9,'var(--warn)'],[80,89.9,'var(--brand)'],[90,100,'var(--ok)']];
+  const arc=(f,t,c)=>{const a1=Math.PI*(1-f/100),a2=Math.PI*(1-t/100);
+    return `<path d="M ${cx+r*Math.cos(a1)} ${cy-r*Math.sin(a1)} A ${r} ${r} 0 0 1 ${cx+r*Math.cos(a2)} ${cy-r*Math.sin(a2)}" stroke="${c}" stroke-width="13" fill="none" opacity=".9"/>`;};
+  return `<svg viewBox="0 0 230 150" width="230" height="150" id="${id}" role="img" aria-label="Audit score ${val.toFixed(1)}">
+    ${seg.map(s=>arc(s[0],s[1],s[2])).join("")}
+    <circle cx="${x}" cy="${y}" r="9" fill="var(--surface)" stroke="${gradeColor(grade)}" stroke-width="4"/></svg>`;
+}
+const DISC = '';
+const FOOT = `<p class="tiny" style="margin-top:32px;color:var(--txt-3);max-width:90ch">Comply iV measures and records. It operates no controls, sits in no call path and makes no compliance decisions. Findings are measurements, not legal advice.</p>`;
+const head = (eyebrow, title, sub, actions='') => `<div class="page-head"><div><div class="ph-eyebrow">${eyebrow}</div><h1>${title}</h1><div class="ph-sub">${sub}</div></div>${actions?`<div class="ph-actions">${actions}</div>`:''}</div>`;
+
+/* ---------- 25 audit domains ---------- */
+const FAMILIES = ['Permission','Who you contact','How you contact','Stopping','Records','Company controls'];
+const DOMAINS = [
+ ['CON','Consent proof','Permission',96,90,71.0,'Every call and text has proof of permission that covers it, of the type its legal basis requires.',['M01','M02','M03'],'1,100 contacts have conflicting proof; 500 have none (40% of those are CiV policy only).','Consent certificates (B), CRM (C)'],
+ ['WEB','Consent forms','Permission',58,58,77.5,'Consent pages, including affiliate pages, carry every required checklist item and are re-captured daily.',['M04','M05','M28'],'Consent block on the quote form changed on 28 Sep; one required item is now missing.','CiV page captures (A)'],
+ ['LPV','Lead source tracing','Permission',44,40,84.0,'Each web lead traces to a named vendor or your own form, a capture page, a time and a certificate.',['M06','M26','M27'],'800 leads lack a vendor or capture page.','Lead platform (C)'],
+ ['VND','Vendor contracts','Permission',38,20,66.7,'Every active lead vendor has signed terms containing the required clauses.',['M07','M29','M30'],'4 of 12 active vendors have incomplete terms on file.','Uploaded contracts (D, AI reader)'],
+ ['AFF','Affiliate oversight','Permission',30,26,72.0,'Affiliate networks supply sub-IDs and publish only approved consent pages.',['M06','M26'],'Vendor E, sub-ID 7 fell 11.2 points this month.','Lead platform (C), page captures (A)'],
+ ['RND','Reassigned numbers','Who you contact',32,18,62.0,'Robocalls made long after consent are preceded by your own reassigned-number check.',['M11'],'Your reassigned-number query logs are not supplied, so pre-contact checks cannot be measured.','Somos (A), your query logs (D, missing)'],
+ ['IDN','Internal DNC list','Who you contact',28,28,90.0,'Your own do-not-contact list is honoured in every contacting system.',['M12'],'22 contacts to 11 numbers after they entered your list.','Your internal list (D)'],
+ ['NDN','National DNC','Who you contact',40,0,null,'National DNC scrubs are current and flagged numbers are handled. Runs on your scrub records only.',['M13'],'Scrub records not supplied. Reported separately; never part of the Audit Score.','Your scrub records (D, missing)'],
+ ['SDN','State DNC','Who you contact',52,0,null,'State DNC lists are handled where states maintain them. Runs on your scrub records only.',['M13'],'Scrub records not supplied. Reported separately; never part of the Audit Score.','Your scrub records (D, missing)'],
+ ['XBD','Non-US numbers','Who you contact',12,12,95.0,'Contacts to numbers outside the United States are identified for separate review.',['M15'],'15 contacts to Canada, the United Kingdom and Jamaica.','Dialer, SMS (C)'],
+ ['DLR','Autodialer use','How you contact',46,42,81.0,'Autodialed contacts carry the consent they require and abandoned calls stay within the limit.',['M19','M31'],'One campaign ran at 3.7% abandoned calls against a 3% limit.','Dialer (C)'],
+ ['PRV','Prerecorded and AI voice','How you contact',38,30,74.0,'Prerecorded and AI-voice messages carry written consent and every required disclosure.',['M19','M20'],'15% of reviewed calls omit a required disclosure.','Dialer, recordings (C)'],
+ ['SMS','Text messaging','How you contact',64,60,79.0,'Texts follow consent, opt-out and quiet-hour rules.',['M10','M16'],'Plain-language opt-out replies are not processed within the deadline.','SMS platform (C)'],
+ ['CTF','Calling hours and frequency','How you contact',70,66,83.5,'Contacts stay within permitted hours, frequency limits and restricted holidays.',['M16','M17','M18'],'310 contacts outside state hours; 120 more with uncertain location.','Dialer, SMS (C), CRM addresses (C)'],
+ ['IDD','Caller ID and identity','How you contact',24,24,92.0,'Caller ID is valid, answers a callback and identifies the caller.',['M21'],'4 caller IDs did not answer a callback.','Dialer (C), CiV callback (A)'],
+ ['SHK','Call authentication','How you contact',18,14,88.0,'Calls carry STIR/SHAKEN attestation.',['M21'],'26% of calls at attestation B; 3% not exposed by the dialer.','Dialer / carrier (C)'],
+ ['VLT','Ringless voicemail','How you contact',14,0,null,'Domain definition pending confirmation against CIV-ATP-01.',[],'Not measured until the domain definition is confirmed.','—'],
+ ['REV','Opt-out handling','Stopping',62,58,62.0,'Opt-outs on every channel stop contact in every system, on time. Tested with live opt-outs from CiV test lines.',['M08','M09','M10'],'Web and email opt-outs never reached the dialer or SMS platform in three tests.','CiV test lines (A), dialer, SMS, CRM (C)'],
+ ['REC','Record keeping','Records',58,50,88.0,'Records exist to show each contact was permitted.',['M22a','M22b'],'Proof complete for 56.0% of numbers (partial: 7 of 8 elements measured).','All sources'],
+ ['RET','Record retention','Records',34,30,91.0,'Records are held for the lawsuit window and the five-year record-keeping rule.',['M23'],'Dialer history reaches back only two years.','All sources'],
+ ['SEC','Data security','Records',48,30,85.0,'Consumer data is protected and every access is logged.',[],'Two shared logins found on the dialer.','Connector metadata (C), uploads (D)'],
+ ['GOV','Policies and training','Company controls',72,40,86.0,'Written policies exist and every contacting agent is trained.',['M25a'],'5 of 50 agents lack current training.','Uploaded policies and training logs (D)'],
+ ['INC','Complaint handling','Company controls',36,30,85.0,'Complaints are logged and resolved within target.',['M24'],'6 complaints open; median 6 days to resolve.','Your complaint log (D)'],
+ ['PLT','Calling platforms','Company controls',58,26,90.0,'Calling and texting platforms are configured and registered correctly.',[],'Messaging registration details missing for one brand.','Connector metadata (C)'],
+ ['MNA','Acquired lead lists','Company controls',60,20,70.0,'Purchased or inherited lists carry a consent chain.',['M25b'],'2 of 3 acquired lists failed the consent-chain sample.','Uploaded lists (D)']
+].map(r => ({code:r[0],name:r[1],family:r[2],total:r[3],run:r[4],score:r[5],what:r[6],metrics:r[7],finding:r[8],sources:r[9],excluded:r[0]==='NDN'||r[0]==='SDN'}));
+DOMAINS.forEach(d=>{
+  if(d.run && d.score!=null){ d.warn=Math.round(d.run*.1); d.pass=Math.max(0,Math.round(d.score/100*d.run-.5*d.warn)); d.fail=Math.max(0,d.run-d.pass-d.warn); }
+  else { d.pass=d.warn=d.fail=0; }
+  d.notrun=d.total-d.run;
+});
+const DOM = Object.fromEntries(DOMAINS.map(d=>[d.code,d]));
+const SCORED = DOMAINS.filter(d=>d.score!=null && !d.excluded);
+const SCORE = SCORED.reduce((a,d)=>a+d.score,0)/SCORED.length;
+const RAW_GRADE = gradeOf(SCORE), GRADE = 'C';
+const CP_RUN = DOMAINS.reduce((a,d)=>a+d.run,0), CP_TOTAL = DOMAINS.reduce((a,d)=>a+d.total,0);
+const famScore = f => { const x=DOMAINS.filter(d=>d.family===f&&d.score!=null&&!d.excluded); return x.length? x.reduce((a,d)=>a+d.score,0)/x.length : null; };
+
+/* ---------- 33 metrics ---------- */
+const METRICS = {
+ M01:['Consent Coverage','88.0%','Legal-basis contacts covered; 84.0% including CiV-policy contacts','Contacts whose legal basis requires proof, with status VERIFIED or WEAK, over all such contacts.'],
+ M02:['Consent Status Mix','76 / 8 / 11 / 5','Verified / weak / conflicting / no proof, % of contacts','Contacts by consent status, split by legal basis and primary reason code.'],
+ M03:['Certificate Validity','92.5%','800 certificate–number pairs supplied','Pairs whose certificate opens at the provider or from CiV’s stored copy and agrees with every other source.'],
+ M04:['Form Wording Pass Rate','77.5%','40 page versions captured','Consent page versions passing every required checklist item; optional misses are warnings.'],
+ M05:['Form Change Alerts','2','1 change in a consent block','Consent pages whose normalised hash changed since the last capture.'],
+ M06:['Lead Traceability','84.0%','5,000 web leads','Web leads traced to a vendor or your own form, a capture page, a time and a certificate.'],
+ M07:['Vendor Terms on File','66.7%','8 of 12 active vendors','Active vendors with an unexpired contract containing every required clause.'],
+ M08:['Opt-out Propagation Time','13.0 h','Median of 8 tests; 90th percentile NEVER','Hours from a CiV test opt-out until every contacting system suppresses the number.'],
+ M09:['Opt-outs Unprocessed at Deadline','2 · 1','M09a not suppressed · M09b contacted after','Test opt-outs not processed within 10 business days, recipient time zone.'],
+ M10:['Contacts After Opt-out','14','9 numbers affected','Contacts at or after an in-scope opt-out plus the grace period.'],
+ M11:['Pre-Contact Reassigned Checks','Not measured','Your query logs are not supplied','Robocalls more than 30 days after consent preceded by your own check after the latest monthly update.',1],
+ M12:['Internal List Contacts','22','11 numbers · supplied by you','Contacts to numbers after they entered your internal do-not-contact list.'],
+ M13:['DNC Scrub Record Check','Not measured','Scrub records not supplied','Scrub age at contact, and contacts to flagged numbers in disjoint buckets.',1],
+ M14:['Litigator List Contacts','4','2 numbers · informational','Contacts to numbers on your own litigator list. Never scored.'],
+ M15:['Cross-border Contacts','15','Canada, United Kingdom, Jamaica','Contacts to numbers outside the United States.'],
+ M16:['Out-of-Hours Contacts','180 · 310','Federal · state; 120 location uncertain','Contacts outside permitted hours in the recipient’s own time zone.'],
+ M17:['Over-Limit Contacts','2','Per person, per subject','Contacts beyond a state frequency limit.'],
+ M18:['Restricted-Holiday Contacts','6','Recipient local date','Contacts on dates a state restricts.'],
+ M19:['Robo-contact Required-Proof Count','540','500 marketing · 25 informational · 15 unknown','Robocalls and robotexts lacking the proof type their category requires.'],
+ M20:['Disclosure Check','85.0%','100 calls and 20 templates reviewed','Reviewed calls and templates carrying every required disclosure.'],
+ M21:['Caller ID Quality','92.0%','Attestation 71% A · 26% B · 3% not exposed','Calls with a valid caller ID that answers a CiV callback.'],
+ M31:['Abandoned-Call Rate','3.7%','1 campaign above the 3% limit','Answered marketing calls not connected to a live agent within two seconds.'],
+ M22a:['Proof Completeness','56.0%','Partial: 7 of 8 elements measured','Numbers where every applicable proof element is present.'],
+ M22b:['Conduct Pass Rate','93.0%','1,000 numbers contacted','Numbers with no opt-out, internal-list, hours, frequency, holiday or proof-type issue.'],
+ M23:['Record Age Coverage','70.0%','Dialer history reaches two years','Numbers whose records cover the lawsuit window and the retention rule.'],
+ M24:['Complaint Resolution','85.0%','Median 6 days to resolve','Complaints resolved against your target.'],
+ M25a:['Training Currency','90.0%','45 of 50 agents','Contacting agents with a training record inside 365 days.'],
+ M25b:['Acquired List Proof','33.3%','1 of 3 lists passed','Acquired lists whose sampled numbers show a consent chain.'],
+ M26:['Few-Signal Lead Rate','86.0%','550 some-signal · 150 high-signal leads','Leads showing few risk signals.'],
+ M27:['Consent Page Match Rate','95.8%','1,200 comparable leads','Certificate snapshots matching CiV’s own capture.'],
+ M28:['Consent Completeness Rate','78.0%','5,000 leads inspected','Leads passing every required checklist item.'],
+ M29:['Vendor Grade Distribution','1 A · 3 B · 1 C','1 D · 1 F · 1 insufficient data','Vendors at each grade over 90 days.'],
+ M30:['Disputable Lead Value','212 leads','[SAMPLE $] · 3 without price','Dispute candidates inside each vendor’s dispute window.']
+};
+const MGROUPS = [['Permission',['M01','M02','M03','M04','M05','M06','M07']],['Stopping',['M08','M09','M10']],['Who you contact',['M11','M12','M13','M14','M15']],['How you contact',['M16','M17','M18','M19','M20','M21','M31']],['Records and controls',['M22a','M22b','M23','M24','M25a','M25b']],['Lead provenance',['M26','M27','M28','M29','M30']]];
+const domainsOf = c => DOMAINS.filter(d=>d.metrics.includes(c)).map(d=>d.code);
+
+/* ---------- contacts ---------- */
+const BASIS = {robocall_marketing:'Marketing robocall · written consent',robocall_informational:'Informational robocall · prior express consent',dnc_listed:'DNC-listed number',civ_policy:'CiV policy only'};
+const CODE = {VF_OK:'All five checks pass.',NP_AFTER_OPT_OUT:'An in-scope opt-out preceded this contact and no newer consent exists.',NP_NONE:'No accepted proof for this number. Required by CiV policy only.',CF_PHONE_MISMATCH:'The number on the proof differs from the number contacted.',WK_RETENTION:'Certificate not retained long-term; expires within 30 days.',WK_TIMING_UNCERTAIN:'Proof and contact fall within the clock tolerance on unlinked sources.',CF_PAGE_MISMATCH:'CiV’s page capture does not match the certificate snapshot.',NP_PRETICKED:'The consent box was pre-ticked on the captured page.',NP_WRONG_TYPE:'The proof type does not meet what this contact requires.'};
+const CONTACTS = [
+ {id:1,time:'29 Sep · 14:02',phone:'(916) •••-4471',ch:'Call',cat:'Marketing',basis:'robocall_marketing',status:'VERIFIED',code:'VF_OK',proof:'TrustedForm certificate, linked to lead L-88214',grade:'B',flags:[],hash:'9f2c…4a1e'},
+ {id:2,time:'29 Sep · 13:47',phone:'(480) •••-0923',ch:'Text',cat:'Marketing',basis:'robocall_marketing',status:'NO_PROOF',code:'NP_AFTER_OPT_OUT',proof:'Certificate cut off by STOP on 21 Sep',grade:'B',flags:['REV · after opt-out'],hash:'1b77…e03c'},
+ {id:3,time:'29 Sep · 21:34',phone:'(623) •••-3380',ch:'Call',cat:'Marketing',basis:'civ_policy',status:'NO_PROOF',code:'NP_NONE',proof:'None supplied',grade:'—',flags:['CTF · out of hours (state)'],hash:'—'},
+ {id:4,time:'28 Sep · 18:31',phone:'(520) •••-7712',ch:'Call',cat:'Informational',basis:'robocall_informational',status:'VERIFIED',code:'VF_OK',proof:'Number provided at purchase (prior express consent)',grade:'C',flags:[],hash:'7c10…9d52'},
+ {id:5,time:'28 Sep · 16:05',phone:'(916) •••-1198',ch:'Call',cat:'Marketing',basis:'dnc_listed',status:'CONFLICTING',code:'CF_PHONE_MISMATCH',proof:'Certificate issued for a different number',grade:'B',flags:['NDN · on your scrub list'],hash:'a4e9…30bb'},
+ {id:6,time:'28 Sep · 10:44',phone:'(480) •••-5561',ch:'Text',cat:'Marketing',basis:'robocall_marketing',status:'WEAK',code:'WK_RETENTION',proof:'Certificate not retained; expires 12 Oct',grade:'B',flags:[],hash:'55d2…c871'},
+ {id:7,time:'27 Sep · 20:58',phone:'(928) •••-2047',ch:'Call',cat:'Marketing',basis:'robocall_marketing',status:'WEAK',code:'WK_TIMING_UNCERTAIN',proof:'Certificate 45 s before call; sources unlinked',grade:'B',flags:['CTF · over limit','DLR · abandoned'],hash:'e018…4f6a'},
+ {id:8,time:'27 Sep · 15:20',phone:'(916) •••-8834',ch:'Call',cat:'Marketing',basis:'robocall_marketing',status:'CONFLICTING',code:'CF_PAGE_MISMATCH',proof:'Certificate; page similarity 0.72',grade:'A + B',flags:['PRV · missing disclosure'],hash:'3d9a…b2c4'},
+ {id:9,time:'26 Sep · 12:09',phone:'(480) •••-6620',ch:'Call',cat:'Marketing',basis:'robocall_marketing',status:'NO_PROOF',code:'NP_PRETICKED',proof:'Certificate; consent box pre-ticked',grade:'A',flags:['IDD · caller ID not callable'],hash:'c6f1…0e97'},
+ {id:10,time:'26 Sep · 09:31',phone:'(604) •••-9015',ch:'Text',cat:'Unknown',basis:'robocall_marketing',status:'NO_PROOF',code:'NP_WRONG_TYPE',proof:'Existing-customer relationship only',grade:'C',flags:['XBD · non-US number'],hash:'8b35…f210'}
+];
+
+/* ---------- actions, vendors, sources, rulebook ---------- */
+const ACTIONS = [
+ {sev:'High',t:'Route web and email opt-outs to dialer and SMS suppression',d:'REV',why:'Three test opt-outs by web form and email never stopped contact.',own:'you',impact:'+6.1 on REV'},
+ {sev:'High',t:'Stop predictive dialing where the only proof is a customer relationship',d:'DLR',why:'540 robo-contacts lacked the proof type their category requires.',own:'you',impact:'+4.8 on DLR'},
+ {sev:'High',t:'Restore the missing checklist item on the quote form',d:'WEB',why:'The consent block changed on 28 Sep.',own:'you',impact:'+3.2 on WEB'},
+ {sev:'High',t:'Set calling windows by recipient state and time zone',d:'CTF',why:'310 contacts fell outside state hours.',own:'you',impact:'+2.9 on CTF'},
+ {sev:'High',t:'Supply your reassigned-number query logs',d:'RND',why:'Pre-contact checks cannot be measured without them.',own:'you',impact:'Unlocks M11'},
+ {sev:'Medium',t:'Pause the two acquired lists that failed the consent-chain sample',d:'MNA',why:'Sampled numbers showed no consent chain.',own:'you',impact:'+5.0 on MNA'},
+ {sev:'Medium',t:'Lower the dialing ratio on campaign SP-Q3-Roof',d:'DLR',why:'Abandoned calls at 3.7% against a 3% limit.',own:'you',impact:'+1.6 on DLR'},
+ {sev:'Medium',t:'Collect signed terms from four vendors',d:'VND',why:'Required clauses missing or unsigned.',own:'you',impact:'+8.3 on VND'},
+ {sev:'Medium',t:'Reconnect the Convoso dialer connector',d:'DLR',why:'Not synced for 52 hours; dependent metrics are stale.',own:'we',impact:'Restores freshness'},
+ {sev:'Low',t:'Route four caller IDs to a live line or voicemail',d:'IDD',why:'They did not answer a CiV callback.',own:'you',impact:'+1.0 on IDD'}
+];
+const VENDORS = [
+ ['Vendor A','114',1420,12,91.2,'+1.4'],['Vendor B','22',1000,50,88.6,'−0.8'],['Vendor C','—',860,18,83.0,'+2.1'],
+ ['Vendor D','—',640,21,79.4,'−3.0'],['Vendor E','7',520,31,61.8,'−11.2'],['Vendor F','—',480,18,52.3,'−4.5'],['Vendor G','—',80,0,null,'—']
+];
+const SOURCES = [
+ ['TrustedForm certificates','B','Client account · API','2 h ago','Current','CON · WEB · LPV'],
+ ['Convoso dialer','C','Least-privilege user · every call logged','52 h ago','Stale','DLR · PRV · CTF · IDD · SHK'],
+ ['Twilio messaging','C','Read-only API','1 h ago','Current','SMS · REV · CTF'],
+ ['Salesforce CRM','C','Read-only API','3 h ago','Current','CON · REV · CTF'],
+ ['LeadConduit','C','Read-only API','1 h ago','Current','LPV · AFF'],
+ ['Somos reassigned numbers','A','CiV caller-agent account','6 h ago','Current','RND'],
+ ['CiV consent page captures','A','Headless capture service','4 h ago','Current','WEB · AFF'],
+ ['CiV test lines','A','CiV-owned carrier mobile lines','27 Sep','Current','REV · IDD'],
+ ['Internal do-not-contact list','D','Upload','28 Sep','Current','IDN'],
+ ['Policies, training, contracts','D','Upload','20 Sep','Current','GOV · VND'],
+ ['Complaint log','D','Upload','25 Sep','Current','INC'],
+ ['DNC scrub records','D','Upload','—','Not supplied','NDN · SDN'],
+ ['Reassigned-number query logs','D','Export from your Somos account','—','Not supplied','RND']
+];
+const RIM_SYS = ['Dialer','Messaging platform','CRM (info)','Lead platform (info)'];
+const RIM = [
+ ['SMS reply — “STOP”',[[2,3],[0.4,3],[5.5,3],[26,3]]],
+ ['SMS reply — “please stop texting me”',[[20,3],[6,3],[null,3],[null,2]]],
+ ['Spoken on a call',[[48,2],['n/t',0],[30,2],['n/t',0]]],
+ ['Web form opt-out',[[null,3],[null,3],[12,3],['n/t',0]]],
+ ['Email reply',[[null,3],[null,3],[18,3],['n/t',0]]]
+];
+function rimCell(v){
+  const [h,n]=v; if(h==='n/t') return `<td><div class="cell">—<br><span class="tiny">not tested</span></div></td>`;
+  const cls = h===null?'never':h<=1?'fast':h<=12?'okc':'slow';
+  const t = h===null?'NEVER':(h<1?h+'h':Math.round(h)+'h');
+  return `<td><div class="cell ${cls}">${t}<br><span class="tiny">${n} test${n===1?'':'s'}${n<3?' · indicative':''}</span></div></td>`;
+}
+
+/* ============================ PAGES ============================ */
+const PAGES = {};
+
+PAGES.home = ()=>`
+${head(CLIENT.name,'Overview','Where your program stands and what to do first.',`<button class="btn btn-primary" onclick="go('actions')">Action queue</button>`)}
+
+<div class="hardstop">
+  <div class="hs-ic">!</div>
+  <div><div class="hs-t">Grade capped at C</div>
+  <div class="hs-d">11.2% of contacts that legally need proof have none or conflicting proof. The limit is 10%.</div></div>
+  <div class="hs-a"><button class="btn w" onclick="go('consent')">Review</button></div>
+</div>
+
+<div class="grid col-2-1" style="margin-bottom:18px">
+  <div class="card hero">
+    <div class="hero-grade">
+      <div class="hg-tag">Audit Score</div>
+      <div class="gauge-wrap">${scoreGauge('gHome', SCORE, GRADE)}<div class="gauge-num"><div class="gauge-grade" style="color:${gradeColor(GRADE)}">${GRADE}</div></div></div>
+      <div class="hg-scale"><span>F</span><span>D</span><span>C</span><span>B</span><span>A</span></div>
+    </div>
+    <div class="hero-body">
+      <div class="hb-headline">${SCORE.toFixed(1)} / 100</div>
+      <p style="font-size:13px;color:var(--txt-2);line-height:1.6;margin-top:10px">${CP_RUN.toLocaleString()} of ${CP_TOTAL.toLocaleString()} checkpoints ran across 22 of 25 domains. The five high-severity actions would lift the score to 84.9 and clear the cap.</p>
+      <div style="margin-top:16px"><button class="btn btn-ghost" onclick="go('scorecard')">Open scorecard</button></div>
+    </div>
+  </div>
+  <div class="card card-pad">
+    <h3 style="margin-bottom:14px">Families</h3>
+    ${FAMILIES.map(f=>{ const s=famScore(f); return `<div class="bench" style="cursor:pointer" onclick="go('scorecard')"><div class="bl" style="width:130px">${f}</div><div class="meter" style="flex:1"><div class="mf" style="width:${s}%;background:${gradeColor(gradeOf(s))}"></div></div><b style="width:40px;text-align:right">${s.toFixed(1)}</b></div>`; }).join("")}
+  </div>
+</div>
+
+<div class="grid col-4" style="margin-bottom:18px">
+  <div class="card kpi" onclick="openMetric('M22a')" style="cursor:pointer"><div class="k-tag">Proof completeness</div><div class="k-val">56.0<small>%</small></div></div>
+  <div class="card kpi" onclick="openMetric('M22b')" style="cursor:pointer"><div class="k-tag">Conduct pass rate</div><div class="k-val">93.0<small>%</small></div></div>
+  <div class="card kpi" onclick="openMetric('M01')" style="cursor:pointer"><div class="k-tag">Consent coverage</div><div class="k-val">88.0<small>%</small></div></div>
+  <div class="card kpi" onclick="go('revocation')" style="cursor:pointer"><div class="k-tag">Opt-out propagation</div><div class="k-val" style="color:var(--bad)">13.0<small> h</small></div></div>
+</div>
+
+<div class="card">
+  <div class="card-h"><h3>Priority actions</h3><button class="btn btn-ghost" onclick="go('actions')">View all</button></div>
+  ${ACTIONS.slice(0,3).map((a,i)=>`<div class="rec" onclick="openDomain('${a.d}')" style="cursor:pointer"><div class="rec-rank">${i+1}</div><div style="flex:1;min-width:0"><h4>${a.t}</h4><div class="tiny" style="margin-top:3px">${a.why}</div></div><div class="rec-impact"><b>${a.impact}</b></div></div>`).join("")}
+</div>
+${FOOT}`;
+
+function domainMap(){
+  return `<div class="dmap">${FAMILIES.map(f=>{ const fs=famScore(f);
+    return `<div class="dfam"><div class="dfam-h"><b>${f}</b><span>${fs==null?'—':fs.toFixed(1)}</span></div>
+      ${DOMAINS.filter(d=>d.family===f).map(d=>{ const s=d.excluded?'Client list':d.score==null?'Not measured':d.score.toFixed(1);
+        return `<button class="dtile ${bandCls(d.score,d.excluded)}" onclick="openDomain('${d.code}')" aria-label="${d.code} ${esc(d.name)}: ${s}"><span class="dc">${d.code}</span><span class="dn">${esc(d.name)}</span><span class="ds">${s}</span></button>`;}).join("")}</div>`;}).join("")}</div>
+  <div class="legend" style="margin-top:14px"><span><i style="background:rgba(22,163,74,.35)"></i>A · 90+</span><span><i style="background:rgba(14,140,127,.35)"></i>B · 80–89</span><span><i style="background:rgba(214,146,12,.4)"></i>C · 70–79</span><span><i style="background:rgba(234,88,12,.35)"></i>D · 60–69</span><span><i style="background:rgba(220,38,38,.35)"></i>F · below 60</span><span><i style="background:var(--surface-3)"></i>Not measured or client list</span></div>`;
+}
+
+PAGES.scorecard = ()=>`
+${head('Position','Audit Scorecard','25 domains, six families, 1,132 checkpoints.')}
+<div class="grid col-3" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Audit Score</div><div class="k-val" style="color:${gradeColor(GRADE)}">${SCORE.toFixed(1)}</div><div class="tiny">Grade ${GRADE}, capped from ${RAW_GRADE}</div></div>
+  <div class="card kpi"><div class="k-tag">Checkpoints run</div><div class="k-val">${CP_RUN}<small> / ${CP_TOTAL}</small></div><div class="tiny">${CP_TOTAL-CP_RUN} excluded, each naming its missing source</div></div>
+  <div class="card kpi"><div class="k-tag">Hard cap</div><div class="k-val" style="color:var(--bad)">11.2<small>%</small></div><div class="tiny">Threshold 10% · cap active</div></div>
+</div>
+<div class="card" style="margin-bottom:18px"><div class="card-h"><h3>All domains</h3></div><div class="card-pad" style="padding-top:0">${domainMap()}</div></div>
+<div class="card" style="margin-bottom:18px">
+  <div class="card-h"><h3>Domain register</h3></div>
+  <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Domain</th><th>Family</th><th>Score</th><th>Checkpoints run</th><th>Top finding</th></tr></thead><tbody>
+  ${DOMAINS.map(d=>`<tr class="clickrow" onclick="openDomain('${d.code}')"><td><span class="mono">${d.code}</span> ${esc(d.name)}</td><td>${d.family}</td><td><span class="pill ${d.excluded||d.score==null?'gray':d.score>=80?'teal':d.score>=70?'amber':'red'}">${d.excluded?'Client list':d.score==null?'Not measured':d.score.toFixed(1)}</span></td><td class="mono tiny">${d.run} / ${d.total}</td><td style="max-width:340px" class="tiny">${esc(d.finding)}</td></tr>`).join("")}
+  </tbody></table></div>
+</div>
+${DISC}`;
+
+PAGES.actions = ()=>`
+${head('Position','Action Queue','What to fix first, ranked by severity and impact.')}
+<div class="card">
+  ${ACTIONS.map((a,i)=>`<div class="rec" onclick="openDomain('${a.d}')" style="cursor:pointer">
+    <div class="rec-rank">${i+1}</div>
+    <div style="flex:1;min-width:0"><h4>${a.t}</h4><div class="tiny" style="margin-top:3px">${a.why}</div>
+      <div style="margin-top:7px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pill ${a.sev==='High'?'red':a.sev==='Medium'?'amber':'gray'}">${a.sev}</span><span class="dcode">${a.d}</span></div></div>
+    <div class="rec-impact"><b>${a.impact}</b></div></div>`).join("")}
+</div>
+${DISC}`;
+
+PAGES.ledger = ()=>`
+${head('Evidence','Contact Ledger','Every call and text, and how it was decided.',`<div class="seg" role="group" aria-label="Filter">${['All','VERIFIED','WEAK','CONFLICTING','NO_PROOF'].map(f=>`<button class="${LEDGER_FILTER===f?'on':''}" onclick="setLedger('${f}')">${f==='All'?'All':f}</button>`).join('')}</div>`)}
+<div class="card" style="margin-bottom:18px"><div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th>Time</th><th>Number</th><th>Channel</th><th>Consent</th><th>Reason</th><th>Other domains</th></tr></thead><tbody>
+  ${CONTACTS.filter(c=>LEDGER_FILTER==='All'||c.status===LEDGER_FILTER).map(c=>`<tr class="clickrow" onclick="openContact(${c.id})"><td>${c.time}</td><td class="mono">${c.phone}</td><td>${c.ch}</td><td>${st(c.status)}</td><td class="mono tiny">${c.code}</td><td>${c.flags.length?c.flags.map(f=>`<span class="flag">${f}</span>`).join(''):'<span class="tiny">—</span>'}</td></tr>`).join("")}
+  </tbody></table></div></div>
+${DISC}`;
+let LEDGER_FILTER='All';
+function setLedger(f){ LEDGER_FILTER=f; go('ledger'); }
+
+PAGES.consent = ()=>`
+${head('Evidence','Consent Integrity','Five checks, four statuses, one reason per contact.')}
+<div class="grid col-4" style="margin-bottom:18px">
+  ${[['VERIFIED','76.0','7,600 contacts','st-v'],['WEAK','8.0','800 contacts · fixable gaps','st-w'],['CONFLICTING','11.0','1,100 contacts · sources disagree','st-c'],['NO_PROOF','5.0','500 contacts · 40% CiV policy only','st-n']].map(x=>`<div class="card kpi"><div class="k-tag"><span class="st ${x[3]}">${x[0]}</span></div><div class="k-val">${x[1]}<small>%</small></div><div class="tiny">${x[2]}</div></div>`).join("")}
+</div>
+<div class="grid col-2-1" style="margin-bottom:18px">
+  <div class="card"><div class="card-h"><h3>Primary reason codes</h3><span class="ch-sub">contacts not VERIFIED</span></div><div class="card-pad" style="padding-top:0">
+    ${[['CF_PHONE_MISMATCH',420,'Number on proof differs from number contacted'],['CF_PAGE_MISMATCH',380,'Page capture does not match certificate snapshot'],['WK_RETENTION',510,'Certificate not retained long-term'],['NP_AFTER_OPT_OUT',160,'Contact after an in-scope opt-out'],['NP_NONE',200,'No proof supplied (CiV policy only)'],['CF_EXPIRED',300,'Certificate expired, 210 before engagement'],['WK_TIMING_UNCERTAIN',290,'Near-tie on unlinked sources'],['NP_WRONG_TYPE',140,'Proof type does not meet requirement']].map(r=>`<div class="bench"><div class="bl"><span class="mono" style="font-size:11.5px;font-weight:600">${r[0]}</span><div class="tiny">${r[2]}</div></div><div class="meter" style="flex:1"><div class="mf" style="width:${r[1]/5.1}%;background:var(--brand)"></div></div><b style="width:48px;text-align:right">${r[1]}</b></div>`).join("")}
+  </div></div>
+  <div class="card card-pad">
+    <h3 style="margin-bottom:10px">The five checks</h3>
+    ${['Applicable proof exists','Proof opens at its source','Proof content is consent','Sources agree','Completeness'].map((n,i)=>`<div class="chk"><span><span class="n">${i+1}</span>${n}</span><span class="tiny">${['NO_PROOF','CONFLICTING','NO_PROOF','CONFLICTING','WEAK'][i]} on fail</span></div>`).join("")}
+    <p class="tiny" style="margin-top:8px;line-height:1.55">Linked contacts prove order along certificate → lead delivered → call with no tolerance, so a call 45 seconds after the form is VERIFIED.</p>
+  </div>
+</div>
+<div class="grid col-3" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Legal basis vs CiV policy</div><div class="k-val">70<small>% legal</small></div><div class="tiny">7,000 contacts require proof by law; 3,000 by CiV policy only</div></div>
+  <div class="card kpi"><div class="k-tag">Certificate Validity · M03</div><div class="k-val">92.5<small>%</small></div><div class="tiny">800 certificate–number pairs</div></div>
+  <div class="card kpi"><div class="k-tag">Expired before engagement</div><div class="k-val">210</div><div class="tiny">Reported separately; excluded from the cap</div></div>
+</div>
+${DISC}`;
+
+PAGES.revocation = ()=>`
+${head('Evidence','Revocation Integrity','Live opt-out tests, timed across every system.')}
+<div class="grid col-3" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Median propagation · M08</div><div class="k-val" style="color:var(--bad)">13.0<small> h</small></div><div class="tiny">8 tests · 90th percentile NEVER</div></div>
+  <div class="card kpi"><div class="k-tag">Not suppressed by deadline · M09a</div><div class="k-val">2</div><div class="tiny">10 business days, recipient time zone</div></div>
+  <div class="card kpi"><div class="k-tag">Contacted after deadline · M09b</div><div class="k-val">1</div><div class="tiny">Test identities excluded from all other metrics</div></div>
+</div>
+<div class="card" style="margin-bottom:18px"><div class="card-h"><h3>Propagation matrix</h3><span class="ch-sub">hours to suppression · tests per cell</span></div>
+  <div class="matwrap"><table class="mat"><thead><tr><th class="rowh">Opt-out channel</th>${RIM_SYS.map(s=>`<th>${s}</th>`).join("")}</tr></thead>
+  <tbody>${RIM.map(r=>`<tr><th class="rowh">${r[0]}</th>${r[1].map(rimCell).join("")}</tr>`).join("")}</tbody></table></div>
+  <div class="card-pad tiny" style="padding-top:12px">Cells with fewer than three tests are indicative. CRM and lead platform are informational.</div>
+  </div>
+${DISC}`;
+
+PAGES.vault = ()=>`
+${head('Evidence','Evidence Vault','Any number’s position on any date.')}
+<div class="card card-pad lookup" style="margin-bottom:18px">
+  <h3 style="margin-bottom:10px">Point-in-time lookup</h3>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <input class="search-in" id="lkNum" value="(916) 555-0142" aria-label="Phone number">
+    <input class="search-in" id="lkDate" value="04 Sep 2026" aria-label="Date">
+    <button class="btn btn-primary" onclick="toast('Position reconstructed from 8 hashed artifacts')">Reconstruct position</button>
+  </div>
+  <div style="margin-top:14px">
+    ${[['Phone epoch','Epoch 2 · since Feb 2025 (bounded) · reassignment checked','Somos query · A'],
+       ['Consent proof','TrustedForm certificate, captured 04 Sep 09:12:40','sha256 4f9c…a71e · B'],
+       ['Consent page as of date','go.sunpathsolar.com/quote · checklist 12 of 12','capture 04 Sep · A'],
+       ['Lead source','Vendor A · sub-ID 114 · delivered 09:12:58','LeadConduit · C'],
+       ['Contact log','Call 09:13:41 · manual · agent 1182','Convoso · C'],
+       ['Opt-out history','None on any channel at that date','SMS + CRM · C'],
+       ['Internal list','Not listed','Upload · D'],
+       ['Consent status','VERIFIED · VF_OK · linked chain','Engine 2.0.4 · rulebook v1.3']]
+      .map(r=>`<div class="evrow"><div style="flex:1"><b style="font-size:12.5px">${r[0]}</b><div class="tiny">${r[1]}</div></div><div class="evd mono tiny">${r[2]}</div></div>`).join("")}
+  </div>
+</div>
+<div class="grid col-3" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Artifacts held</div><div class="k-val">2.41<small> M</small></div><div class="tiny">S3 Object Lock, compliance mode</div></div>
+  <div class="card kpi"><div class="k-tag">Daily anchors</div><div class="k-val">122</div><div class="tiny">OpenTimestamps + RFC 3161 since ${CLIENT.engaged}</div></div>
+  <div class="card kpi"><div class="k-tag">Deleted under retention</div><div class="k-val">1,840</div><div class="tiny">Content removed, hashes kept, results frozen</div></div>
+</div>
+${DISC}`;
+
+PAGES.conduct = ()=>`
+${head('Intelligence','Contact Conduct','Hours, frequency, abandoned calls and caller identity.')}
+<div class="grid col-4" style="margin-bottom:18px">
+  ${['M16','M17','M18','M31','M19','M20','M21','M15'].map(c=>metricKpi(c)).join("")}
+</div>
+<div class="grid col-2" style="margin-bottom:18px">
+  <div class="card card-pad"><h3 style="margin-bottom:10px">Out-of-hours contacts by state</h3>
+    ${[['California',140],['Arizona',70],['Texas',48],['Florida',32],['Nevada',20]].map(r=>`<div class="bench"><div class="bl">${r[0]}</div><div class="meter" style="flex:1"><div class="mf" style="width:${r[1]/1.4}%;background:var(--warn)"></div></div><b style="width:40px;text-align:right">${r[1]}</b></div>`).join("")}
+    <p class="tiny" style="margin-top:8px">Local time from address ZIP, else area code and exchange. 120 low-confidence contacts reported as location uncertain, never counted.</p></div>
+  <div class="card card-pad"><h3 style="margin-bottom:10px">Abandoned-call rate by campaign</h3>
+    ${[['SP-Q3-Roof',3.7],['SP-Battery',2.4],['SP-Referral',1.1],['SP-Winback',0.8]].map(r=>`<div class="bench"><div class="bl">${r[0]}</div><div class="meter" style="flex:1"><div class="mf" style="width:${r[1]*20}%;background:${r[1]>3?'var(--bad)':'var(--brand)'}"></div></div><b style="width:40px;text-align:right">${r[1]}%</b></div>`).join("")}
+    <p class="tiny" style="margin-top:8px">Limit 3% of answered calls per campaign per 30 days.</p></div>
+</div>
+${DISC}`;
+function metricKpi(c){ const m=METRICS[c]; return `<div class="card kpi" onclick="openMetric('${c}')" style="cursor:pointer"><div class="k-tag"><span class="mono">${c}</span> · ${m[0]}</div><div class="k-val" style="${m[4]?'font-size:18px;color:var(--txt-3)':''}">${m[1]}</div><div class="tiny">${m[2]}</div></div>`; }
+
+PAGES.leads = ()=>`
+${head('Intelligence','Lead Provenance','Lead signals and consent completeness.')}
+<div class="grid col-4" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Few risk signals</div><div class="k-val">4,300</div><div class="tiny">86.0% of 5,000 leads · M26</div></div>
+  <div class="card kpi"><div class="k-tag">Some risk signals</div><div class="k-val" style="color:var(--warn)">550</div><div class="tiny">Warrant a closer look</div></div>
+  <div class="card kpi"><div class="k-tag">High risk signals</div><div class="k-val" style="color:var(--bad)">150</div><div class="tiny">Includes hard signals</div></div>
+  <div class="card kpi"><div class="k-tag">Consent completeness · M28</div><div class="k-val">78.0<small>%</small></div><div class="tiny">Page match 95.8% · M27</div></div>
+</div>
+<div class="grid col-2" style="margin-bottom:18px">
+  <div class="card card-pad"><h3 style="margin-bottom:10px">Most frequent signals</h3>
+    ${[['Fast fill (under 8 s)',310],['Name-match signal',240],['Email signal',180],['Device burst',120],['Pasted fields',96],['New website (under 90 days)',60]].map(r=>`<div class="bench"><div class="bl">${r[0]}</div><div class="meter" style="flex:1"><div class="mf" style="width:${r[1]/3.1}%;background:var(--brand)"></div></div><b style="width:40px;text-align:right">${r[1]}</b></div>`).join("")}</div>
+  <div class="card card-pad"><h3 style="margin-bottom:10px">Checklist items most often missing</h3>
+    ${[['Consent is not a condition of purchase',420],['Automated contact disclosed',310],['Number shown to the consumer',260],['Text contrast',150],['Consent above the button',110]].map(r=>`<div class="bench"><div class="bl">${r[0]}</div><div class="meter" style="flex:1"><div class="mf" style="width:${r[1]/4.2}%;background:var(--warn)"></div></div><b style="width:40px;text-align:right">${r[1]}</b></div>`).join("")}</div>
+</div>
+${LEADUSE}`;
+
+const LEADUSE = `<p class="tiny" style="margin-top:4px">For your own vendor and consent review only. Not for eligibility or marketing-targeting decisions.</p>`;
+PAGES.vendors = ()=>`
+${head('Intelligence','Vendor Ledger','Vendor quality over the last 90 days.')}
+<div class="grid col-3" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Grade distribution · M29</div><div class="k-val">1 A · 3 B</div><div class="tiny">1 C · 1 D · 1 F · 1 insufficient data</div></div>
+  <div class="card kpi"><div class="k-tag">Dispute candidates · M30</div><div class="k-val">212</div><div class="tiny">Inside vendor dispute windows · [SAMPLE $]</div></div>
+  <div class="card kpi"><div class="k-tag">Score alerts</div><div class="k-val" style="color:var(--bad)">1</div><div class="tiny">Vendor E dropped 11.2 points</div></div>
+</div>
+<div class="card" style="margin-bottom:18px"><div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th>Vendor</th><th>Sub-ID</th><th>Leads</th><th>High signals</th><th>Score</th><th>Grade</th><th>Month on month</th></tr></thead><tbody>
+  ${VENDORS.map(v=>`<tr><td><b>${v[0]}</b></td><td class="mono">${v[1]}</td><td>${v[2].toLocaleString()}</td><td>${v[3]}</td><td><b>${v[4]==null?'—':v[4].toFixed(1)}</b></td><td>${v[4]==null?'<span class="pill gray">Insufficient data</span>':`<span class="dfgrade" style="color:${gradeColor(gradeOf(v[4]))};font-family:var(--display);font-weight:800">${gradeOf(v[4])}</span>`}</td><td><span class="trend ${v[5].startsWith('+')?'up good':v[5]==='—'?'flat':'down bad'}">${v[5]}</span></td></tr>`).join("")}
+  </tbody></table></div></div>
+${DISC}`;
+
+PAGES.metrics = ()=>`
+${head('Intelligence','Metrics Library','All 33 metrics.',`<div class="mfilter">${['All',...MGROUPS.map(g=>g[0])].map(f=>`<button class="btn ${METRIC_FILTER===f?'btn-primary':'btn-ghost'}" style="padding:6px 11px;font-size:12px" onclick="setMetricFilter('${f}')">${f}</button>`).join("")}</div>`)}
+${MGROUPS.filter(g=>METRIC_FILTER==='All'||g[0]===METRIC_FILTER).map(([fam,codes])=>`<h3 style="margin:6px 0 10px">${fam}</h3>
+<div class="grid col-4" style="margin-bottom:18px">${codes.map(c=>{ const m=METRICS[c]; const ds=domainsOf(c);
+  return `<div class="card mcard" onclick="openMetric('${c}')"><span class="mc">${c}</span><span class="mn">${m[0]}</span><span class="mv ${m[4]?'na':''}">${m[1]}</span><span class="mt">${m[2]}</span>${ds.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${ds.map(x=>`<span class="dcode" onclick="event.stopPropagation();openDomain('${x}')">${x}</span>`).join("")}</div>`:''}</div>`;}).join("")}</div>`).join("")}
+${DISC}`;
+let METRIC_FILTER='All';
+function setMetricFilter(f){ METRIC_FILTER=f; go('metrics'); }
+
+PAGES.sources = ()=>`
+${head('Disclosure','Source Registry','Connected systems and their evidence grade.')}
+<div class="grid col-4" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Sources current</div><div class="k-val">10<small> / 13</small></div><div class="tiny">Fresh within 48 hours</div></div>
+  <div class="card kpi"><div class="k-tag">Stale</div><div class="k-val" style="color:var(--warn)">1</div><div class="tiny">Convoso dialer · 52 h</div></div>
+  <div class="card kpi"><div class="k-tag">Not supplied</div><div class="k-val" style="color:var(--bad)">2</div><div class="tiny">Blocks M11 and M13</div></div>
+  <div class="card kpi"><div class="k-tag">Grade D share</div><div class="k-val">14<small>%</small></div><div class="tiny">of complete numbers rest on uploads</div></div>
+</div>
+<div class="card" style="margin-bottom:18px"><div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th>Source</th><th>Grade</th><th>Access</th><th>Last sync</th><th>Status</th><th>Feeds domains</th></tr></thead><tbody>
+  ${SOURCES.map(s=>`<tr><td><b>${s[0]}</b></td><td><span class="prov ${s[1]==='A'?'own':''}">${s[1]}</span></td><td class="tiny">${s[2]}</td><td class="mono tiny">${s[3]}</td><td><span class="pill ${s[4]==='Current'?'green':s[4]==='Stale'?'amber':'red'}">${s[4]}</span></td><td class="mono tiny">${s[5]}</td></tr>`).join("")}
+  </tbody></table></div></div>
+${DISC}`;
+
+PAGES.reports = ()=>`
+${head('Disclosure','Reports & Exports','Reports and evidence files.')}
+<div class="tiles" style="margin-bottom:18px">
+  ${[['Period audit report','Scorecard, domains, metrics and action queue for September 2026.','PDF'],
+     ['Evidence file export','Per phone epoch: every contact, its consent decision, proof elements, grades and hashes.','PDF + JSON'],
+     ['Certification pack','Hash manifest, capture description and custodian certification template (FRE 902(14)).','ZIP'],
+     ['Litigation evidence package','Court-ready export for up to 25 named numbers with chain-of-custody report.','Add-on'],
+     ['Metric export','All 33 metrics with numerators, denominators and data completeness.','CSV'],
+     ['Rulebook snapshot','Every rule value in force for the period, with effective dates.','PDF']]
+    .map(t=>`<div class="tile" onclick="toast('${t[0]} queued')" style="cursor:pointer"><h4>${t[0]}</h4><div class="t-meta">${t[1]}</div><div class="t-go">${t[2]}</div></div>`).join("")}
+</div>
+${DISC}`;
+
+PAGES.boundaries = ()=>`
+${head('Engagement','Scope & Boundaries','Who does what.')}
+<div class="grid col-3" style="margin-bottom:18px">
+  <div class="bcol we"><h4>Comply iV does</h4><ul><li>Measures every contact against the rulebook in force on its date</li><li>Captures consent pages and runs live opt-out tests</li><li>Hashes, stores and anchors every artifact</li><li>Reports findings as measurements</li></ul></div>
+  <div class="bcol you"><h4>You decide</h4><ul><li>Whom to call and text, and when</li><li>Which fixes to make and in what order</li><li>What to raise with vendors</li><li>Which lists and records to supply</li></ul></div>
+  <div class="bcol non"><h4>Comply iV never</h4><ul><li>Blocks, dials or scrubs on your behalf</li><li>Sells or maintains DNC or litigator lists</li><li>Contacts your customers or vendors</li><li>States legal conclusions</li></ul></div>
+</div>
+<div class="card card-pad" style="margin-bottom:18px">
+  <h3>Engagement mode</h3>
+  <div class="posrow"><div class="pk">Current mode</div><div class="pv">Direct engagement</div><div class="ps">Findings and alerts go to your team</div></div>
+  <div class="posrow"><div class="pk">Counsel-directed option</div><div class="pv">Available</div><div class="ps">Your counsel engages and directs Comply iV; findings and alerts go to counsel only. Improves, but does not guarantee, work-product protection.</div></div>
+  <div class="posrow"><div class="pk">Notice</div><div class="pv">Acknowledged 01 Jun 2026</div><div class="ps">Alerts put your company on notice. Acting on them, or discussing them with counsel, is your decision.</div></div>
+</div>
+${FOOT}`;
+
+PAGES.rulebook = ()=>`
+${head('Engagement','Rulebook','Settings the engine reads, and their status.')}
+<div class="grid col-3" style="margin-bottom:18px">
+  <div class="card kpi"><div class="k-tag">Set</div><div class="k-val" style="color:var(--ok)">58</div><div class="tiny">Decided</div></div>
+  <div class="card kpi"><div class="k-tag">Proposed</div><div class="k-val" style="color:var(--warn)">24</div><div class="tiny">Starting value; counsel to confirm</div></div>
+  <div class="card kpi"><div class="k-tag">TBD</div><div class="k-val" style="color:var(--bad)">14</div><div class="tiny">Dependent checks do not run</div></div>
+</div>
+<div class="card" style="margin-bottom:18px"><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Setting</th><th>Value in force</th><th>Owner</th><th>Status</th></tr></thead><tbody>
+${[['optout_deadline_business_days','10','Counsel','prop'],['optout_keywords','STOP, QUIT, END, REVOKE, OPT OUT, CANCEL, UNSUBSCRIBE','Counsel','prop'],['optout_scope_rules','Awaiting the FCC order of 30 Sep 2026','Counsel','tbd'],['calling_hours','Federal 08:00–21:00; state table pending','Counsel','tbd'],['frequency_limits','State table pending','Counsel','tbd'],['ebr_purchase_months / ebr_inquiry_months','18 / 3','Counsel','prop'],['written_consent_types','Web certificate, signed form, IVR or keypress with disclosures','Counsel','prop'],['dnc_scrub_max_age_days','31','Counsel','prop'],['clock_skew_seconds','120','Engineering','set'],['grade_bands','90 / 80 / 70 / 60','Product','set'],['hard_cap_share','10%','Product','set'],['ai_accuracy_pass_mark','95%','Product','prop']]
+ .map(r=>`<tr><td class="mono tiny">${r[0]}</td><td class="tiny">${r[1]}</td><td>${r[2]}</td><td class="${r[3]==='set'?'status-set':r[3]==='prop'?'status-prop':'status-tbd'}">${r[3]==='set'?'Set':r[3]==='prop'?'Proposed':'TBD'}</td></tr>`).join("")}
+</tbody></table></div></div>
+${DISC}`;
+
+/* ============================ DRAWERS ============================ */
+function openDrawer(tag, title, html){ $("#drawerTag").textContent=tag; $("#drawerTitle").textContent=title; $("#drawerBody").innerHTML=html; $("#drawer").classList.add("open"); $("#drawerBg").classList.add("open"); }
+function closeDrawer(){ $("#drawer").classList.remove("open"); $("#drawerBg").classList.remove("open"); }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeDrawer(); });
+
+function openDomain(code){
+  const d=DOM[code]; if(!d) return;
+  const sc = d.excluded?'Client list':d.score==null?'Not measured':`${d.score.toFixed(1)} · grade ${gradeOf(d.score)}`;
+  const w = n => d.total? (n/d.total*100) : 0;
+  openDrawer(`${d.code} · ${d.family}`, d.name, `
+    <p class="d-lede">${esc(d.what)}</p>
+    <div class="drawer-row"><div class="dr-k">Domain score</div><div class="dr-v"><b>${sc}</b></div></div>
+    <h4>Checkpoints</h4>
+    <div class="cpseg"><i style="width:${w(d.pass)}%;background:var(--ok)"></i><i style="width:${w(d.warn)}%;background:var(--warn)"></i><i style="width:${w(d.fail)}%;background:var(--bad)"></i><i style="width:${w(d.notrun)}%;background:var(--line)"></i></div>
+    <div class="cplegend"><div><b>${d.pass}</b>Pass</div><div><b>${d.warn}</b>Warn</div><div><b>${d.fail}</b>Fail</div><div><b>${d.notrun}</b>Not run</div></div>
+    <p class="tiny" style="margin-top:8px">${d.run} of ${d.total} checkpoints ran. Excluded checkpoints are listed with the source they need.</p>
+    <h4>Top finding</h4><p>${esc(d.finding)}</p>
+    <h4>Metrics</h4>${d.metrics.length?d.metrics.map(c=>`<div class="drawer-row" style="cursor:pointer" onclick="openMetric('${c}')"><div class="dr-k"><span class="mono">${c}</span> ${METRICS[c][0]}</div><div class="dr-v"><b>${METRICS[c][1]}</b></div></div>`).join(""):'<p class="tiny">Scored from checkpoints only.</p>'}
+    <h4>Evidence sources</h4><p class="tiny">${esc(d.sources)}</p>`);
+}
+function openMetric(c){
+  const m=METRICS[c]; if(!m) return; const ds=domainsOf(c);
+  openDrawer(`Metric ${c}`, m[0], `
+    <div class="drawer-row"><div class="dr-k">This period</div><div class="dr-v"><b style="font-size:20px;font-family:var(--display)">${m[1]}</b></div></div>
+    <p class="tiny">${m[2]}</p>
+    <h4>Definition</h4><p>${m[3]}</p>
+    <h4>Feeds domains</h4><div style="display:flex;gap:6px;flex-wrap:wrap">${ds.length?ds.map(x=>`<span class="dcode" onclick="openDomain('${x}')">${x} · ${esc(DOM[x].name)}</span>`).join(""):'<span class="tiny">Lead Inspector metric</span>'}</div>
+    <p class="tiny" style="margin-top:14px">Shown to one decimal place; grades apply to the unrounded value. A missing source shows “not measured”, never zero.</p>`);
+}
+function openContact(id){
+  const c=CONTACTS.find(x=>x.id===id); if(!c) return; const k=c.code;
+  let failAt = k==='VF_OK'?6 : (k==='NP_NO_CONSENT_TEXT'||k==='NP_PRETICKED')?3 : k.startsWith('NP_')?1 : ['CF_NOT_FOUND','CF_EXPIRED','CF_FILE_MISSING'].includes(k)?2 : k.startsWith('CF_')?4 : 5;
+  const steps=['Applicable proof exists','Proof opens at its source','Proof content is consent','Sources agree','Completeness'].map((n,i)=>{ const s=i+1;
+    const r = s<failAt?['Pass','green']: s===failAt?(s===5?['Gap','amber']:['Fails','red']):['Not reached','gray'];
+    return `<div class="chk"><span><span class="n">${s}</span>${n}</span><span class="pill ${r[1]}">${r[0]}</span></div>`; }).join("");
+  openDrawer(`${c.time} · ${c.ch} · ${c.cat}`, c.phone, `
+    <div class="drawer-row"><div class="dr-k">Consent status</div><div class="dr-v">${st(c.status)}</div></div>
+    <div class="drawer-row"><div class="dr-k">Primary reason</div><div class="dr-v"><span class="mono tiny">${c.code}</span></div></div>
+    <p class="tiny" style="margin:6px 0 4px">${CODE[c.code]}</p>
+    <h4>Consent checks</h4>${steps}
+    <h4>Other domains</h4>${c.flags.length?c.flags.map(f=>`<span class="flag">${f}</span>`).join(""):'<p class="tiny">No other domain flagged this contact.</p>'}
+    <h4>Proof and evidence</h4>
+    <div class="drawer-row"><div class="dr-k">Legal basis</div><div class="dr-v">${BASIS[c.basis]}</div></div>
+    <div class="drawer-row"><div class="dr-k">Proof used</div><div class="dr-v">${esc(c.proof)}</div></div>
+    <div class="drawer-row"><div class="dr-k">Source grade</div><div class="dr-v">${c.grade}</div></div>
+    <div class="drawer-row"><div class="dr-k">Hash</div><div class="dr-v mono tiny">sha256 ${c.hash}</div></div>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="toast('Evidence file queued')">Export evidence file</button>`);
+}
+
+/* ============================ NAV ============================ */
+const IC = {
+ home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+ scorecard:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+ actions:'<path d="M9 11l2 2 4-4"/><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4"/>',
+ ledger:'<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+ consent:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/>',
+ revocation:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
+ vault:'<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v2"/>',
+ conduct:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ leads:'<path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/>',
+ vendors:'<path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/><path d="M3 12h18"/>',
+ metrics:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ sources:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+ reports:'<path d="M3 6h18v12H3z"/><path d="M3 10h18"/>',
+ boundaries:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+ rulebook:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/>'
+};
+const NAV = [
+ ['Your position',[['home','Overview'],['scorecard','Audit Scorecard'],['actions','Action Queue',ACTIONS.filter(a=>a.sev==='High').length,'teal']]],
+ ['Evidence',[['ledger','Contact Ledger'],['consent','Consent Integrity'],['revocation','Revocation Integrity'],['vault','Evidence Vault']]],
+ ['Intelligence',[['conduct','Contact Conduct'],['leads','Lead Provenance'],['vendors','Vendor Ledger'],['metrics','Metrics Library']]],
+ ['Disclosure',[['sources','Source Registry'],['reports','Reports & Exports']]],
+ ['Engagement',[['boundaries','Scope & Boundaries'],['rulebook','Rulebook']]]
+];
+let CURRENT='home';
+function renderNav(){
+  $("#nav").innerHTML = NAV.map(([label,items])=>`<div class="nav-label">${label}</div>`+items.map(([k,t,b,cls])=>
+    `<div class="nav-item ${k===CURRENT?'active':''}" data-page="${k}" role="button" tabindex="0"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${IC[k]}</svg>${esc(t)}${b?`<span class="badge ${cls||''}">${b}</span>`:''}</div>`).join("")).join("") +
+    `<div class="side-card"><div class="sc-tag">Growth plan</div><h4>Recording</h4><p>Last anchor 04:12 UTC today.</p></div>`;
+  document.querySelectorAll(".nav-item").forEach(n=>{
+    n.addEventListener("click",()=>go(n.dataset.page));
+    n.addEventListener("keydown",e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(n.dataset.page);} });
+  });
+}
+function go(k){
+  if(!PAGES[k]) return; CURRENT=k; closeDrawer(); renderNav();
+  $("#pageHost").innerHTML = PAGES[k](); $("#scroll").scrollTop = 0;
+}
+function toggleTheme(){ const h=document.documentElement; h.setAttribute("data-theme", h.getAttribute("data-theme")==="dark"?"light":"dark"); }
+let toastT;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2600); }
+$("#gsearch").addEventListener("keydown",e=>{
+  if(e.key!=='Enter') return; const q=e.target.value.trim().toUpperCase();
+  if(DOM[q]) return openDomain(q);
+  const mk = Object.keys(METRICS).find(k=>k.toUpperCase()===q); if(mk) return openMetric(mk);
+  const dn = DOMAINS.find(d=>d.name.toUpperCase().includes(q)); if(dn&&q) return openDomain(dn.code);
+  toast('Try a domain code (REV), a metric (M08) or a domain name');
+});
+go('home');
+</script>
+</body>
+</html>

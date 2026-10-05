@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CiV client portal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFECE5;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1B2226}
+a{color:#0F5E63}a:hover{color:#0A4347}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; display: flex; background: #F6F4EF; color: #1B2226; font-family: 'IBM Plex Sans', system-ui, sans-serif; overflow: hidden">
+
+  <nav aria-label="Main" style="width: 232px; flex-shrink: 0; background: #FBFAF7; border-right: 1px solid #DDD8CD; display: flex; flex-direction: column; padding: 24px 16px; gap: 4px; box-sizing: border-box">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px 20px 8px">
+      <div style="width: 30px; height: 30px; border-radius: 8px; background: #1B2A2F; color: #F6F4EF; display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', Georgia, serif; font-size: 17px; font-weight: 600">C</div>
+      <div style="display: flex; flex-direction: column">
+        <span style="font-family: 'Newsreader', Georgia, serif; font-size: 19px; font-weight: 600; letter-spacing: -0.2px">Comply iV</span>
+        <span style="font-size: 11.5px; color: #5B6469">TCPA evidence portal</span>
+      </div>
+    </div>
+    <sc-for list="{{ nav }}" as="item" hint-placeholder-count="7">
+      <button type="button" onClick="{{ item.pick }}" style="height: 44px; border: 0; border-radius: 8px; text-align: left; padding: 0 12px; font-size: 14px; font-weight: 500; cursor: pointer; background: {{ item.bg }}; color: {{ item.fg }}">{{ item.label }}</button>
+    </sc-for>
+    <div style="flex-grow: 1"></div>
+    <div style="padding: 12px; border: 1px solid #DDD8CD; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 11.5px; color: #5B6469; text-transform: uppercase; letter-spacing: 0.6px">Engagement</span>
+      <span style="font-size: 13.5px; font-weight: 500">Direct</span>
+      <span style="font-size: 12px; color: #5B6469; line-height: 1.45">Counsel-directed mode routes findings and alerts to your lawyers only.</span>
+    </div>
+  </nav>
+
+  <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+    <header style="height: 72px; flex-shrink: 0; border-bottom: 1px solid #DDD8CD; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: #F6F4EF">
+      <div style="display: flex; align-items: baseline; gap: 14px">
+        <span style="font-family: 'Newsreader', Georgia, serif; font-size: 24px; font-weight: 600">Acme Solar</span>
+        <span style="font-size: 13px; color: #5B6469">Report period Sep 1 – Sep 30, 2026</span>
+        <span style="font-size: 11.5px; font-weight: 600; color: #7A4300; background: #FBEAD0; padding: 3px 8px; border-radius: 999px">Sample data</span>
+      </div>
+      <div style="display: flex; gap: 10px">
+        <button type="button" style="height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid #C9C3B6; background: #FFFFFF; color: #1B2226; font-size: 13.5px; font-weight: 500; cursor: pointer">Evidence export</button>
+        <button type="button" style="height: 40px; padding: 0 16px; border-radius: 8px; border: 0; background: #0F5E63; color: #FFFFFF; font-size: 13.5px; font-weight: 500; cursor: pointer">Download report</button>
+      </div>
+    </header>
+
+    <main style="flex-grow: 1; overflow: auto; padding: 28px 32px 32px 32px; box-sizing: border-box">
+
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 20px">
+          <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+            <div style="grid-column: span 1; background: #1B2A2F; color: #F6F4EF; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+              <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #BFD3D0">Overall score</span>
+              <div style="display: flex; align-items: baseline; gap: 12px">
+                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 48px; font-weight: 600; line-height: 1">81.3</span>
+                <span style="font-size: 22px; font-weight: 600; background: #F6F4EF; color: #1B2A2F; border-radius: 8px; padding: 2px 10px">C</span>
+              </div>
+              <span style="font-size: 12.5px; color: #DDE7E5; line-height: 1.45">Grade capped at C: 11.2% of legal-basis contacts are NO_PROOF or CONFLICTING (cap at 10%).</span>
+              <span style="font-size: 12px; color: #BFD3D0">812 of 1,132 checkpoints ran</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+              <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #5B6469">M22a Proof Completeness</span>
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 40px; font-weight: 600; line-height: 1">56.0%</span>
+              <span style="font-size: 12.5px; color: #5B6469; line-height: 1.45">Partial: 7 of 8 elements measured. Client reassigned-number query logs not supplied.</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+              <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #5B6469">M22b Conduct Pass Rate</span>
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 40px; font-weight: 600; line-height: 1">93.0%</span>
+              <span style="font-size: 12.5px; color: #5B6469; line-height: 1.45">Numbers with no contact after opt-out, out of hours, over limit or on a holiday.</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+              <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #5B6469">M01 Consent Coverage</span>
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 40px; font-weight: 600; line-height: 1">88.0%</span>
+              <span style="font-size: 12.5px; color: #5B6469; line-height: 1.45">Contacts that legally need proof. 84.0% including CiV-policy contacts.</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+            <section style="grid-column: span 2; background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline">
+                <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 20px; font-weight: 600">Consent status of every contact</h2>
+                <span style="font-size: 12.5px; color: #5B6469">10,000 contacts this period</span>
+              </div>
+              <div style="display: flex; height: 18px; border-radius: 6px; overflow: hidden">
+                <sc-for list="{{ mix }}" as="seg" hint-placeholder-count="4">
+                  <div style="width: {{ seg.w }}; background: {{ seg.bar }}"></div>
+                </sc-for>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+                <sc-for list="{{ mix }}" as="seg" hint-placeholder-count="4">
+                  <div style="display: flex; flex-direction: column; gap: 4px">
+                    <span style="align-self: flex-start; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; background: {{ seg.bg }}; color: {{ seg.fg }}">{{ seg.label }}</span>
+                    <span style="font-size: 22px; font-weight: 600">{{ seg.pct }}</span>
+                    <span style="font-size: 12px; color: #5B6469; line-height: 1.4">{{ seg.note }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 8px; border-top: 1px solid #ECE8DF">
+                <h3 style="margin: 0; font-size: 14px; font-weight: 600">Domain scores</h3>
+                <sc-for list="{{ domains }}" as="d" hint-placeholder-count="6">
+                  <div style="display: flex; align-items: center; gap: 12px">
+                    <span style="width: 150px; font-size: 13.5px">{{ d.name }}</span>
+                    <div style="flex-grow: 1; height: 8px; background: #ECE8DF; border-radius: 4px; overflow: hidden">
+                      <div style="height: 8px; width: {{ d.w }}; background: #0F5E63"></div>
+                    </div>
+                    <span style="width: 48px; text-align: right; font-size: 13.5px; font-weight: 600">{{ d.score }}</span>
+                  </div>
+                </sc-for>
+                <span style="font-size: 12px; color: #5B6469">DNC and litigator domains run on client-supplied lists and are shown separately; they never enter the overall score.</span>
+              </div>
+            </section>
+
+            <section style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+              <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 20px; font-weight: 600">Alerts</h2>
+              <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 10px; background: #F6F4EF">
+                  <span style="align-self: flex-start; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: {{ a.bg }}; color: {{ a.fg }}">{{ a.level }}</span>
+                  <span style="font-size: 13.5px; font-weight: 500; line-height: 1.4">{{ a.title }}</span>
+                  <span style="font-size: 12px; color: #5B6469">{{ a.when }}</span>
+                </div>
+              </sc-for>
+              <span style="font-size: 12px; color: #5B6469; line-height: 1.45">Alerts put your company on notice. Act on them or discuss them with counsel.</span>
+            </section>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isContacts }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; gap: 20px; align-items: flex-start">
+          <section style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; justify-content: space-between; align-items: center">
+              <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-weight: 600">Contacts</h2>
+              <div style="display: flex; gap: 8px">
+                <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+                  <button type="button" onClick="{{ f.pick }}" style="height: 36px; padding: 0 12px; border-radius: 999px; font-size: 12.5px; font-weight: 500; cursor: pointer; border: 1px solid {{ f.bd }}; background: {{ f.bg }}; color: {{ f.fg }}">{{ f.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; overflow: hidden">
+              <div style="display: grid; grid-template-columns: 130px 150px 70px 110px 150px 130px minmax(0, 1fr); gap: 12px; padding: 12px 16px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #5B6469; border-bottom: 1px solid #ECE8DF">
+                <span>Time</span><span>Number</span><span>Channel</span><span>Category</span><span>Proof needed</span><span>Status</span><span>Primary reason</span>
+              </div>
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+                <button type="button" onClick="{{ r.pick }}" style="width: 100%; display: grid; grid-template-columns: 130px 150px 70px 110px 150px 130px minmax(0, 1fr); gap: 12px; align-items: center; padding: 0 16px; min-height: 48px; border: 0; border-bottom: 1px solid #ECE8DF; text-align: left; font-size: 13px; color: #1B2226; cursor: pointer; background: {{ r.rowBg }}">
+                  <span>{{ r.time }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px">{{ r.phone }}</span>
+                  <span>{{ r.channel }}</span>
+                  <span>{{ r.category }}</span>
+                  <span style="font-size: 12.5px; color: #3E474C">{{ r.basisLabel }}</span>
+                  <span style="justify-self: start; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; background: {{ r.chipBg }}; color: {{ r.chipFg }}">{{ r.status }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3E474C">{{ r.code }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <span style="font-size: 12px; color: #5B6469">A number's result is its worst contact status in the period. Showing {{ rowCount }} of 10,000 contacts.</span>
+          </section>
+
+          <aside style="width: 360px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box">
+            <sc-if value="{{ noSel }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 4px">
+                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 600">Contact detail</span>
+                <span style="font-size: 13px; color: #5B6469; line-height: 1.5">Select a contact to see the five consent checks, the proof used, its source grade and the evidence hash.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 14px">
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500">{{ sel.phone }}</span>
+                  <span style="font-size: 12.5px; color: #5B6469">{{ sel.time }} · {{ sel.channel }} · {{ sel.category }}</span>
+                  <span style="align-self: flex-start; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; background: {{ sel.chipBg }}; color: {{ sel.chipFg }}">{{ sel.status }}</span>
+                  <span style="font-size: 13px; line-height: 1.5"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px">{{ sel.code }}</span> — {{ sel.codeText }}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <h3 style="margin: 0; font-size: 13px; font-weight: 600">Five checks</h3>
+                  <sc-for list="{{ steps }}" as="st" hint-placeholder-count="5">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border-radius: 8px; background: #F6F4EF">
+                      <span style="font-size: 12.5px">{{ st.n }}. {{ st.name }}</span>
+                      <span style="font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: {{ st.bg }}; color: {{ st.fg }}">{{ st.state }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; line-height: 1.5">
+                  <h3 style="margin: 0; font-size: 13px; font-weight: 600">Proof and evidence</h3>
+                  <span><span style="color: #5B6469">Why proof is needed:</span> {{ sel.basisLabel }}</span>
+                  <span><span style="color: #5B6469">Proof used:</span> {{ sel.proof }}</span>
+                  <span><span style="color: #5B6469">Source grade:</span> {{ sel.grade }}</span>
+                  <span><span style="color: #5B6469">Labels:</span> {{ sel.labels }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #3E474C">sha256 {{ sel.hash }}</span>
+                </div>
+                <button type="button" style="height: 40px; border-radius: 8px; border: 1px solid #C9C3B6; background: #FFFFFF; color: #1B2226; font-size: 13px; font-weight: 500; cursor: pointer">Open evidence file</button>
+              </div>
+            </sc-if>
+          </aside>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMetrics }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 22px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-weight: 600">Metrics</h2>
+            <span style="font-size: 12.5px; color: #5B6469">28 audit metrics and 5 Lead Inspector metrics</span>
+          </div>
+          <sc-for list="{{ metricGroups }}" as="g" hint-placeholder-count="6">
+            <section style="display: flex; flex-direction: column; gap: 10px">
+              <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #3E474C">{{ g.family }}</h3>
+              <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+                <sc-for list="{{ g.items }}" as="m" hint-placeholder-count="4">
+                  <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #5B6469">{{ m.code }}</span>
+                    <span style="font-size: 13.5px; font-weight: 500">{{ m.name }}</span>
+                    <span style="font-size: 18px; font-weight: 600; color: {{ m.valueColor }}">{{ m.value }}</span>
+                    <span style="font-size: 12px; color: #5B6469; line-height: 1.4">{{ m.note }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOptout }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px">
+          <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-weight: 600">Opt-out tests</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px">
+              <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #5B6469">M08 Opt-out speed</span>
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; font-weight: 600">13.0 h median</span>
+              <span style="font-size: 12.5px; color: #5B6469">8 tests in the last 90 days; 90th percentile NEVER</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px">
+              <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #5B6469">M09a Not stopped by deadline</span>
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; font-weight: 600">2</span>
+              <span style="font-size: 12.5px; color: #5B6469">Deadline: 10 business days, recipient time zone</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px">
+              <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #5B6469">M09b Contacted after deadline</span>
+              <span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; font-weight: 600">1</span>
+              <span style="font-size: 12.5px; color: #5B6469">Test opt-outs through the client's own forms only</span>
+            </div>
+          </div>
+          <section style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; overflow: hidden">
+            <div style="display: grid; grid-template-columns: 200px repeat(4, minmax(0, 1fr)); gap: 0; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #5B6469; border-bottom: 1px solid #ECE8DF">
+              <span style="padding: 12px 16px">Opt-out channel</span>
+              <span style="padding: 12px 16px">Dialer</span>
+              <span style="padding: 12px 16px">SMS platform</span>
+              <span style="padding: 12px 16px">CRM (info)</span>
+              <span style="padding: 12px 16px">Lead platform (info)</span>
+            </div>
+            <sc-for list="{{ matrix }}" as="row" hint-placeholder-count="4">
+              <div style="display: grid; grid-template-columns: 200px repeat(4, minmax(0, 1fr)); border-bottom: 1px solid #ECE8DF">
+                <span style="padding: 14px 16px; font-size: 13.5px; font-weight: 500">{{ row.channel }}</span>
+                <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="4">
+                  <div style="margin: 6px; padding: 8px 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 2px; background: {{ c.bg }}">
+                    <span style="font-size: 14px; font-weight: 600; color: {{ c.fg }}">{{ c.text }}</span>
+                    <span style="font-size: 11.5px; color: #5B6469">{{ c.sub }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="padding: 12px 16px; font-size: 12px; color: #5B6469">Only the dialer and SMS platform set a test's overall time. Cells with fewer than 3 tests are indicative. Spoken tests start with a recording notice.</div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLeads }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-weight: 600">Lead Inspector</h2>
+            <span style="font-size: 12.5px; color: #5B6469">Nightly batch · 5,000 leads this period</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+            <sc-for list="{{ signalTiles }}" as="t" hint-placeholder-count="4">
+              <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px">
+                <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: #5B6469">{{ t.label }}</span>
+                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 30px; font-weight: 600">{{ t.value }}</span>
+                <span style="font-size: 12.5px; color: #5B6469">{{ t.note }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <section style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; overflow: hidden">
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr) 90px 110px 90px 90px 120px; gap: 12px; padding: 12px 16px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #5B6469; border-bottom: 1px solid #ECE8DF">
+              <span>Vendor and sub-ID</span><span>Leads</span><span>High signals</span><span>Score</span><span>Grade</span><span>Month on month</span>
+            </div>
+            <sc-for list="{{ vendors }}" as="v" hint-placeholder-count="6">
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) 90px 110px 90px 90px 120px; gap: 12px; align-items: center; padding: 0 16px; min-height: 48px; border-bottom: 1px solid #ECE8DF; font-size: 13.5px">
+                <span>{{ v.name }}</span>
+                <span>{{ v.leads }}</span>
+                <span>{{ v.high }}</span>
+                <span style="font-weight: 600">{{ v.score }}</span>
+                <span style="justify-self: start; font-weight: 600; padding: 2px 10px; border-radius: 6px; background: {{ v.gbg }}; color: {{ v.gfg }}">{{ v.grade }}</span>
+                <span style="color: {{ v.trendColor }}">{{ v.trend }}</span>
+              </div>
+            </sc-for>
+            <div style="padding: 12px 16px; font-size: 12px; color: #5B6469; line-height: 1.5">Results describe signals in lead records for your own vendor review. They may not be used to decide anyone's eligibility for credit, insurance, employment, housing or any other benefit.</div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isFixes }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-weight: 600">Fix list</h2>
+            <span style="font-size: 12.5px; color: #5B6469">Sorted by severity and contacts affected</span>
+          </div>
+          <sc-for list="{{ fixes }}" as="x" hint-placeholder-count="6">
+            <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 12px; padding: 16px 18px; display: grid; grid-template-columns: 90px minmax(0, 1fr) 170px 120px; gap: 16px; align-items: center">
+              <span style="justify-self: start; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: {{ x.bg }}; color: {{ x.fg }}">{{ x.sev }}</span>
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <span style="font-size: 14px; font-weight: 500">{{ x.title }}</span>
+                <span style="font-size: 12.5px; color: #5B6469">{{ x.step }}</span>
+              </div>
+              <span style="font-size: 12.5px; color: #3E474C">{{ x.family }}</span>
+              <span style="font-size: 12.5px; font-weight: 500">{{ x.status }}</span>
+            </div>
+          </sc-for>
+          <span style="font-size: 12px; color: #5B6469">Fix steps come from a library reviewed by counsel. CiV is not a law firm; findings are measurements, not legal advice.</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSources }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-weight: 600">Sources</h2>
+            <span style="font-size: 12.5px; color: #5B6469">Grade A captured by CiV · B third-party API · C your systems by API · D uploaded by you</span>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #DDD8CD; border-radius: 14px; overflow: hidden">
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr) 80px 220px 160px 140px; gap: 12px; padding: 12px 16px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #5B6469; border-bottom: 1px solid #ECE8DF">
+              <span>Source</span><span>Grade</span><span>Access</span><span>Last sync</span><span>Status</span>
+            </div>
+            <sc-for list="{{ sources }}" as="s" hint-placeholder-count="8">
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) 80px 220px 160px 140px; gap: 12px; align-items: center; padding: 0 16px; min-height: 48px; border-bottom: 1px solid #ECE8DF; font-size: 13.5px">
+                <span>{{ s.name }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500">{{ s.grade }}</span>
+                <span style="color: #3E474C">{{ s.access }}</span>
+                <span style="color: #3E474C">{{ s.sync }}</span>
+                <span style="justify-self: start; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: {{ s.bg }}; color: {{ s.fg }}">{{ s.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <span style="font-size: 12px; color: #5B6469">Every artifact is hashed at capture, stored write-once and anchored daily. A hash shows a file is unchanged, not that it was accurate, so every result shows its source grade.</span>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { screen: 'overview', filter: 'ALL', sel: null };
+  }
+  renderVals() {
+    var s = this.state;
+    var self = this;
+    var tone = {
+      VERIFIED: ['#E1F0E8', '#0B5A3F'],
+      WEAK: ['#FBEAD0', '#7A4300'],
+      CONFLICTING: ['#FCE1D3', '#8C2E0B'],
+      NO_PROOF: ['#F6D6D6', '#7F1616']
+    };
+    var screens = [['overview', 'Overview'], ['contacts', 'Contacts'], ['metrics', 'Metrics'], ['optout', 'Opt-out tests'], ['leads', 'Lead Inspector'], ['fixes', 'Fix list'], ['sources', 'Sources']];
+    var nav = screens.map(function (p) {
+      return {
+        label: p[1],
+        pick: function () { self.setState({ screen: p[0] }); },
+        bg: s.screen === p[0] ? '#1B2A2F' : 'transparent',
+        fg: s.screen === p[0] ? '#FFFFFF' : '#2B3438'
+      };
+    });
+
+    var basisText = {
+      robocall_marketing: 'Marketing robocall (written)',
+      robocall_informational: 'Informational robocall',
+      dnc_listed: 'Number on DNC scrub list',
+      civ_policy: 'CiV policy only'
+    };
+    var codeText = {
+      VF_OK: 'All five checks pass.',
+      NP_AFTER_OPT_OUT: 'An in-scope opt-out came before this contact, with no newer consent.',
+      NP_NONE: 'No accepted proof for this number. Needed under CiV policy only.',
+      CF_PHONE_MISMATCH: 'The phone number on the proof differs from the number contacted.',
+      WK_RETENTION: 'Certificate not retained long-term; expires within 30 days.',
+      WK_TIMING_UNCERTAIN: 'Proof and contact are within the clock tolerance on unlinked sources.',
+      CF_PAGE_MISMATCH: 'CiV\u2019s page capture differs from the certificate snapshot.',
+      NP_PRETICKED: 'The consent box was pre-ticked on the captured page.',
+      NP_WRONG_TYPE: 'Proof type does not meet what this contact requires.'
+    };
+    var contacts = [
+      { id: 1, time: 'Sep 29, 14:02', phone: '(602) \u2022\u2022\u2022-4471', channel: 'Call', category: 'Marketing', basis: 'robocall_marketing', status: 'VERIFIED', code: 'VF_OK', proof: 'Web certificate, TrustedForm, captured Sep 29 14:01:18', grade: 'B', labels: 'Linked to lead \u00b7 CiV stored copy', hash: '9f2c\u20264a1e' },
+      { id: 2, time: 'Sep 29, 13:47', phone: '(480) \u2022\u2022\u2022-0923', channel: 'Text', category: 'Marketing', basis: 'robocall_marketing', status: 'NO_PROOF', code: 'NP_AFTER_OPT_OUT', proof: 'Web certificate (cut off by STOP on Sep 21)', grade: 'B', labels: 'Opt-out: reply STOP', hash: '1b77\u2026e03c' },
+      { id: 3, time: 'Sep 29, 11:15', phone: '(623) \u2022\u2022\u2022-3380', channel: 'Call', category: 'Marketing', basis: 'civ_policy', status: 'NO_PROOF', code: 'NP_NONE', proof: 'None supplied', grade: '\u2014', labels: 'Manual live call \u00b7 not on any list', hash: '\u2014' },
+      { id: 4, time: 'Sep 28, 18:31', phone: '(520) \u2022\u2022\u2022-7712', channel: 'Call', category: 'Informational', basis: 'robocall_informational', status: 'VERIFIED', code: 'VF_OK', proof: 'Number given by customer at purchase (prior express)', grade: 'C', labels: 'Appointment reminder', hash: '7c10\u20269d52' },
+      { id: 5, time: 'Sep 28, 16:05', phone: '(602) \u2022\u2022\u2022-1198', channel: 'Call', category: 'Marketing', basis: 'dnc_listed', status: 'CONFLICTING', code: 'CF_PHONE_MISMATCH', proof: 'Web certificate for a different number', grade: 'B', labels: 'On client scrub list', hash: 'a4e9\u202630bb' },
+      { id: 6, time: 'Sep 28, 10:44', phone: '(480) \u2022\u2022\u2022-5561', channel: 'Text', category: 'Marketing', basis: 'robocall_marketing', status: 'WEAK', code: 'WK_RETENTION', proof: 'Web certificate, not retained', grade: 'B', labels: 'Expires Oct 12', hash: '55d2\u2026c871' },
+      { id: 7, time: 'Sep 27, 20:58', phone: '(928) \u2022\u2022\u2022-2047', channel: 'Call', category: 'Marketing', basis: 'robocall_marketing', status: 'WEAK', code: 'WK_TIMING_UNCERTAIN', proof: 'Web certificate 45 s before call, unlinked', grade: 'B', labels: 'Unlinked sources', hash: 'e018\u20264f6a' },
+      { id: 8, time: 'Sep 27, 15:20', phone: '(602) \u2022\u2022\u2022-8834', channel: 'Call', category: 'Marketing', basis: 'robocall_marketing', status: 'CONFLICTING', code: 'CF_PAGE_MISMATCH', proof: 'Web certificate; page similarity 0.72', grade: 'A + B', labels: 'Affiliate page', hash: '3d9a\u2026b2c4' },
+      { id: 9, time: 'Sep 26, 12:09', phone: '(480) \u2022\u2022\u2022-6620', channel: 'Call', category: 'Marketing', basis: 'robocall_marketing', status: 'NO_PROOF', code: 'NP_PRETICKED', proof: 'Web certificate; box pre-ticked', grade: 'A', labels: 'Vendor A, sub-ID 114', hash: 'c6f1\u20260e97' },
+      { id: 10, time: 'Sep 26, 09:31', phone: '(623) \u2022\u2022\u2022-9015', channel: 'Text', category: 'Unknown', basis: 'robocall_marketing', status: 'NO_PROOF', code: 'NP_WRONG_TYPE', proof: 'Existing-customer relationship only', grade: 'C', labels: 'Category unknown', hash: '8b35\u2026f210' }
+    ];
+
+    var filterIds = ['ALL', 'VERIFIED', 'WEAK', 'CONFLICTING', 'NO_PROOF'];
+    var filters = filterIds.map(function (f) {
+      var on = s.filter === f;
+      return {
+        label: f === 'ALL' ? 'All' : f,
+        pick: function () { self.setState({ filter: f, sel: null }); },
+        bg: on ? '#1B2A2F' : '#FFFFFF',
+        fg: on ? '#FFFFFF' : '#1B2226',
+        bd: on ? '#1B2A2F' : '#C9C3B6'
+      };
+    });
+    var shown = contacts.filter(function (c) { return s.filter === 'ALL' || c.status === s.filter; });
+    var rows = shown.map(function (c) {
+      return {
+        time: c.time, phone: c.phone, channel: c.channel, category: c.category, status: c.status, code: c.code,
+        basisLabel: basisText[c.basis],
+        chipBg: tone[c.status][0], chipFg: tone[c.status][1],
+        rowBg: s.sel === c.id ? '#EAF1EF' : '#FFFFFF',
+        pick: function () { self.setState({ sel: c.id }); }
+      };
+    });
+    var cur = null;
+    contacts.forEach(function (c) { if (c.id === s.sel) { cur = c; } });
+
+    var stepNames = ['Applicable proof exists', 'Proof opens at its source', 'Proof content is consent', 'Sources agree', 'Completeness'];
+    var failAt = 6;
+    if (cur) {
+      var k = cur.code;
+      if (k === 'VF_OK') { failAt = 6; }
+      else if (k === 'NP_NO_CONSENT_TEXT' || k === 'NP_PRETICKED') { failAt = 3; }
+      else if (k.indexOf('NP_') === 0) { failAt = 1; }
+      else if (k === 'CF_NOT_FOUND' || k === 'CF_EXPIRED' || k === 'CF_FILE_MISSING') { failAt = 2; }
+      else if (k.indexOf('CF_') === 0) { failAt = 4; }
+      else { failAt = 5; }
+    }
+    var steps = stepNames.map(function (name, i) {
+      var n = i + 1;
+      var st = 'Pass', bg = '#E1F0E8', fg = '#0B5A3F';
+      if (n === failAt) {
+        if (n === 5) { st = 'Gap'; bg = '#FBEAD0'; fg = '#7A4300'; }
+        else { st = 'Fails'; bg = '#F6D6D6'; fg = '#7F1616'; }
+      } else if (n > failAt) { st = 'Not reached'; bg = '#ECE8DF'; fg = '#3E474C'; }
+      return { n: n, name: name, state: st, bg: bg, fg: fg };
+    });
+    var sel = cur ? {
+      phone: cur.phone, time: cur.time, channel: cur.channel, category: cur.category, status: cur.status, code: cur.code,
+      codeText: codeText[cur.code], basisLabel: basisText[cur.basis], proof: cur.proof, grade: cur.grade, labels: cur.labels, hash: cur.hash,
+      chipBg: tone[cur.status][0], chipFg: tone[cur.status][1]
+    } : {};
+
+    var mix = [
+      { label: 'VERIFIED', pct: '76.0%', w: '76%', note: '7,600 contacts', bar: '#2E7D5B' },
+      { label: 'WEAK', pct: '8.0%', w: '8%', note: '800 contacts', bar: '#C98A2B' },
+      { label: 'CONFLICTING', pct: '11.0%', w: '11%', note: '1,100 contacts', bar: '#B4532A' },
+      { label: 'NO_PROOF', pct: '5.0%', w: '5%', note: '500 contacts; 40% CiV policy only', bar: '#7F1616' }
+    ].map(function (m) { m.bg = tone[m.label][0]; m.fg = tone[m.label][1]; return m; });
+
+    var domains = [
+      { name: 'Permission', score: '74.2' }, { name: 'Who you contact', score: '81.0' }, { name: 'How you contact', score: '79.5' },
+      { name: 'Stopping', score: '62.0' }, { name: 'Records', score: '88.1' }, { name: 'Company controls', score: '84.7' }
+    ].map(function (d) { d.w = d.score + '%'; return d; });
+
+    var sev = { High: ['#F6D6D6', '#7F1616'], Medium: ['#FBEAD0', '#7A4300'], Low: ['#E6ECEE', '#2B3438'], Info: ['#E6ECEE', '#2B3438'] };
+    var alerts = [
+      { level: 'High', title: '14 contacts after opt-out across 9 numbers', when: 'Found Sep 29' },
+      { level: 'High', title: 'Consent block changed on the quote form page', when: 'Captured Sep 28' },
+      { level: 'Medium', title: '42 certificates expire within 30 days (not retained)', when: 'As of Sep 30' },
+      { level: 'Medium', title: 'Dialer connector not synced for 52 hours', when: 'Since Sep 28' }
+    ].map(function (a) { a.bg = sev[a.level][0]; a.fg = sev[a.level][1]; return a; });
+
+    var dim = '#5B6469', ink = '#1B2226';
+    var metricGroups = [
+      { family: 'Permission', items: [
+        { code: 'M01', name: 'Consent Coverage', value: '88.0%', note: 'Legal basis \u00b7 84.0% incl. CiV policy' },
+        { code: 'M02', name: 'Consent Status Mix', value: '76 / 8 / 11 / 5', note: 'Verified / weak / conflicting / no proof, %' },
+        { code: 'M03', name: 'Certificate Validity', value: '92.5%', note: '800 certificate and phone pairs' },
+        { code: 'M04', name: 'Form Wording Pass Rate', value: '77.5%', note: '40 page versions captured' },
+        { code: 'M05', name: 'Form Change Alerts', value: '2 changed', note: '1 in the consent block' },
+        { code: 'M06', name: 'Lead Traceability', value: '84.0%', note: '5,000 web leads' },
+        { code: 'M07', name: 'Vendor Terms on File', value: '66.7%', note: '8 of 12 active vendors' } ] },
+      { family: 'Stopping', items: [
+        { code: 'M08', name: 'Opt-out Speed', value: '13.0 h', note: 'Median of 8 tests' },
+        { code: 'M09', name: 'Opt-outs Unprocessed at Deadline', value: '2 \u00b7 1', note: 'M09a not stopped \u00b7 M09b contacted' },
+        { code: 'M10', name: 'Contacts After Opt-out', value: '14', note: '9 numbers' } ] },
+      { family: 'Who you contact', items: [
+        { code: 'M11', name: 'Pre-Contact Reassigned Checks', value: 'Not measured', note: 'Client query logs not supplied', muted: true },
+        { code: 'M12', name: 'Internal List Contacts', value: '22', note: '11 numbers \u00b7 supplied by client' },
+        { code: 'M13', name: 'DNC Scrub Record Check', value: '2.0% stale', note: '35 flagged contacts \u00b7 supplied by client' },
+        { code: 'M14', name: 'Litigator List Contacts', value: '4', note: '2 numbers \u00b7 informational' },
+        { code: 'M15', name: 'Cross-border Contacts', value: '15', note: 'Canada, UK, Jamaica' } ] },
+      { family: 'How you contact', items: [
+        { code: 'M16', name: 'Out-of-Hours Contacts', value: '180 \u00b7 310', note: 'Federal \u00b7 state; 120 location uncertain' },
+        { code: 'M17', name: 'Over-Limit Contacts', value: '2', note: 'Per person, per subject' },
+        { code: 'M18', name: 'Holiday Contacts', value: '6', note: 'Recipient local date' },
+        { code: 'M19', name: 'Robo-contact Required-Proof Count', value: '540', note: '500 marketing \u00b7 25 informational \u00b7 15 unknown' },
+        { code: 'M20', name: 'Disclosure Check', value: '85.0%', note: '100 calls + 20 templates' },
+        { code: 'M21', name: 'Caller ID Quality', value: '92.0%', note: '71% A \u00b7 26% B \u00b7 3% not available' },
+        { code: 'M31', name: 'Abandoned-Call Rate', value: '3.7%', note: '1 campaign above 3%' } ] },
+      { family: 'Records and company controls', items: [
+        { code: 'M22a', name: 'Proof Completeness', value: '56.0%', note: 'Partial: 7 of 8 elements' },
+        { code: 'M22b', name: 'Conduct Pass Rate', value: '93.0%', note: '1,000 numbers' },
+        { code: 'M23', name: 'Record Age Coverage', value: '70.0%', note: 'Dialer history 2 years' },
+        { code: 'M24', name: 'Complaint Handling', value: '85.0%', note: 'Median 6 days' },
+        { code: 'M25a', name: 'Training Records', value: '90.0%', note: '45 of 50 agents' },
+        { code: 'M25b', name: 'Acquired List Proof', value: '33.3%', note: '1 of 3 lists' } ] },
+      { family: 'Lead Inspector', items: [
+        { code: 'M26', name: 'Few-Signal Lead Rate', value: '86.0%', note: '550 some \u00b7 150 high' },
+        { code: 'M27', name: 'Consent Page Match Rate', value: '95.8%', note: '1,200 comparable leads' },
+        { code: 'M28', name: 'Consent Completeness Rate', value: '78.0%', note: '5,000 leads' },
+        { code: 'M29', name: 'Vendor Grade Mix', value: '1 A \u00b7 3 B \u00b7 1 C', note: '1 D \u00b7 1 F \u00b7 1 not enough data' },
+        { code: 'M30', name: 'Disputable Lead Value', value: '212 leads', note: 'Total [SAMPLE $] \u00b7 3 without price' } ] }
+    ].map(function (g) {
+      g.items = g.items.map(function (m) { m.valueColor = m.muted ? dim : ink; return m; });
+      return g;
+    });
+
+    var cell = function (text, sub, kind) {
+      var bg = '#F6F4EF', fg = ink;
+      if (kind === 'never') { bg = '#F6D6D6'; fg = '#7F1616'; }
+      if (kind === 'slow') { bg = '#FBEAD0'; fg = '#7A4300'; }
+      if (kind === 'ind') { bg = '#ECE8DF'; fg = '#3E474C'; }
+      return { text: text, sub: sub, bg: bg, fg: fg };
+    };
+    var matrix = [
+      { channel: 'Reply STOP', cells: [cell('2.0 h', '3 tests'), cell('0.4 h', '3 tests'), cell('5.5 h', '3 tests'), cell('26.0 h', '3 tests')] },
+      { channel: 'Plain-words reply', cells: [cell('20.0 h', '3 tests', 'slow'), cell('6.0 h', '3 tests'), cell('NEVER', '3 tests'), cell('NEVER', '2 tests \u00b7 indicative', 'ind')] },
+      { channel: 'Spoken on a call', cells: [cell('48.0 h', '2 tests \u00b7 indicative', 'ind'), cell('\u2014', 'not tested'), cell('30.0 h', '2 tests \u00b7 indicative', 'ind'), cell('\u2014', 'not tested')] },
+      { channel: 'Web or email', cells: [cell('NEVER', '3 tests', 'never'), cell('NEVER', '3 tests', 'never'), cell('12.0 h', '3 tests'), cell('\u2014', 'not tested')] }
+    ];
+
+    var signalTiles = [
+      { label: 'Few risk signals', value: '4,300', note: '86.0% of leads (M26)' },
+      { label: 'Some risk signals', value: '550', note: 'Look closer' },
+      { label: 'High risk signals', value: '150', note: 'Includes hard signals' },
+      { label: 'Dispute candidates', value: '212', note: 'Inside vendor dispute windows' }
+    ];
+    var gradeTone = { A: ['#E1F0E8', '#0B5A3F'], B: ['#E4EEF0', '#0F4F54'], C: ['#FBEAD0', '#7A4300'], D: ['#FCE1D3', '#8C2E0B'], F: ['#F6D6D6', '#7F1616'], '\u2014': ['#ECE8DF', '#3E474C'] };
+    var vendors = [
+      { name: 'Vendor A \u00b7 sub-ID 114', leads: '1,420', high: '12', score: '91.2', grade: 'A', trend: '+1.4', up: true },
+      { name: 'Vendor B \u00b7 sub-ID 22', leads: '1,000', high: '50', score: '88.6', grade: 'B', trend: '\u22120.8', up: false },
+      { name: 'Vendor C', leads: '860', high: '18', score: '83.0', grade: 'B', trend: '+2.1', up: true },
+      { name: 'Vendor D', leads: '640', high: '21', score: '79.4', grade: 'C', trend: '\u22123.0', up: false },
+      { name: 'Vendor E \u00b7 sub-ID 7', leads: '520', high: '31', score: '61.8', grade: 'D', trend: '\u221211.2 \u00b7 alert', up: false },
+      { name: 'Vendor F', leads: '480', high: '18', score: '52.3', grade: 'F', trend: '\u22124.5', up: false },
+      { name: 'Vendor G', leads: '80', high: '0', score: '\u2014', grade: '\u2014', trend: 'Not enough data', up: true }
+    ].map(function (v) {
+      v.gbg = gradeTone[v.grade][0]; v.gfg = gradeTone[v.grade][1];
+      v.trendColor = v.up ? '#3E474C' : '#8C2E0B';
+      return v;
+    });
+
+    var fixes = [
+      { sev: 'High', title: '14 contacts after opt-out across 9 numbers', step: 'Map the dialer outcome \u201cDNC request\u201d to suppression in the SMS platform.', family: 'Stopping', status: 'Open' },
+      { sev: 'High', title: 'Consent block changed on the quote form page', step: 'Compare the new wording with the consent checklist and restore required items.', family: 'Permission', status: 'Open' },
+      { sev: 'High', title: '540 robo-contacts without the required proof type', step: 'Stop predictive dialing on leads whose only proof is a customer relationship.', family: 'How you contact', status: 'In progress' },
+      { sev: 'Medium', title: '42 certificates expire within 30 days', step: 'Turn on certificate retention with your certificate vendor.', family: 'Permission', status: 'Open' },
+      { sev: 'Medium', title: 'Dialer connector not synced for 52 hours', step: 'Reconnect the dialer from Sources.', family: 'Sources', status: 'Open' },
+      { sev: 'Low', title: '4 caller IDs did not answer a callback', step: 'Route the listed caller IDs to a live line or voicemail.', family: 'How you contact', status: 'Resolved' }
+    ].map(function (x) { x.bg = sev[x.sev][0]; x.fg = sev[x.sev][1]; return x; });
+
+    var stTone = { OK: ['#E1F0E8', '#0B5A3F'], Stale: ['#FBEAD0', '#7A4300'], 'Not supplied': ['#ECE8DF', '#3E474C'] };
+    var sources = [
+      { name: 'TrustedForm certificates', grade: 'B', access: 'Your account, API', sync: '2 hours ago', status: 'OK' },
+      { name: 'Convoso dialer', grade: 'C', access: 'Least-privilege user, logged', sync: '52 hours ago', status: 'Stale' },
+      { name: 'Twilio SMS', grade: 'C', access: 'Read-only API', sync: '1 hour ago', status: 'OK' },
+      { name: 'Salesforce CRM', grade: 'C', access: 'Read-only API', sync: '3 hours ago', status: 'OK' },
+      { name: 'LeadConduit leads', grade: 'C', access: 'Read-only API', sync: '1 hour ago', status: 'OK' },
+      { name: 'Somos reassigned numbers', grade: 'A', access: 'CiV caller-agent account', sync: '6 hours ago', status: 'OK' },
+      { name: 'CiV consent page captures', grade: 'A', access: 'Headless browser', sync: '4 hours ago', status: 'OK' },
+      { name: 'Internal do-not-contact list', grade: 'D', access: 'Upload', sync: 'Sep 28', status: 'OK' },
+      { name: 'DNC scrub records', grade: 'D', access: 'Upload', sync: '\u2014', status: 'Not supplied' },
+      { name: 'Your reassigned-number query logs', grade: 'D', access: 'Export from your Somos account', sync: '\u2014', status: 'Not supplied' }
+    ].map(function (x) { x.bg = stTone[x.status][0]; x.fg = stTone[x.status][1]; return x; });
+
+    return {
+      nav: nav,
+      isOverview: s.screen === 'overview', isContacts: s.screen === 'contacts', isMetrics: s.screen === 'metrics',
+      isOptout: s.screen === 'optout', isLeads: s.screen === 'leads', isFixes: s.screen === 'fixes', isSources: s.screen === 'sources',
+      mix: mix, domains: domains, alerts: alerts,
+      filters: filters, rows: rows, rowCount: String(rows.length),
+      hasSel: !!cur, noSel: !cur, sel: sel, steps: steps,
+      metricGroups: metricGroups, matrix: matrix,
+      signalTiles: signalTiles, vendors: vendors, fixes: fixes, sources: sources
+    };
+  }
+}
+</script>
+</body>
+</html>
